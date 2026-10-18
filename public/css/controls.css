@@ -1,0 +1,227 @@
+/* Floating Bottom Controls Dock */
+.bottom-dock-wrapper {
+  position: fixed;
+  bottom: 24px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: var(--z-controls);
+  pointer-events: none;
+  transition: transform var(--trans-smooth), opacity var(--trans-smooth);
+}
+
+.bottom-dock {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--grad-dock);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-dock);
+  transition: transform var(--trans-base), box-shadow var(--trans-base);
+}
+
+.bottom-dock:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 24px 54px -10px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.2);
+}
+
+/* Dock Divider */
+.dock-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-subtle);
+  margin: 0 2px;
+}
+
+/* + Upload Button - Active State */
+.btn-dock-upload {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--grad-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  color: #ffffff;
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.45);
+  transition: all var(--trans-base);
+}
+
+.btn-dock-upload:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 28px rgba(99, 102, 241, 0.65), 0 0 15px rgba(56, 189, 248, 0.5);
+}
+
+.btn-dock-upload .plus-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  font-weight: 800;
+}
+
+/* + Upload Button - Locked Countdown State */
+.btn-dock-locked {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background: rgba(22, 27, 38, 0.9);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-family: var(--font-main);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--trans-base);
+}
+
+.btn-dock-locked:hover {
+  background: rgba(26, 33, 48, 0.95);
+  border-color: rgba(245, 158, 11, 0.5);
+  color: var(--text-primary);
+}
+
+.lock-icon-wrapper {
+  color: var(--accent-amber);
+  display: flex;
+  align-items: center;
+}
+
+.countdown-digits {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent-amber);
+  letter-spacing: 0.04em;
+}
+
+/* Dock Navigation Action Buttons */
+.dock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-family: var(--font-main);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  text-decoration: none;
+  position: relative;
+}
+
+.dock-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-subtle);
+}
+
+.dock-btn.active {
+  color: var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.dock-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+/* Profile button in dock */
+.dock-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 6px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all var(--trans-fast);
+}
+
+.dock-profile-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--border-light);
+}
+
+.dock-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--accent-cyan);
+}
+
+.badge-unread {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: var(--accent-rose);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  min-width: 17px;
+  height: 17px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid var(--bg-primary);
+}
+
+/* Hidden dock for wallpaper mode */
+.dock-hidden {
+  transform: translateY(120px) !important;
+  opacity: 0 !important;
+}
+
+/* Mobile responsive dock */
+@media (max-width: 768px) {
+  .bottom-dock-wrapper {
+    bottom: 12px;
+  }
+
+  .bottom-dock {
+    gap: 4px;
+    padding: 6px 10px;
+    max-width: 96vw;
+  }
+
+  .dock-btn span:not(.badge-unread) {
+    display: none;
+  }
+
+  .dock-profile-btn span.profile-name {
+    display: none;
+  }
+
+  .btn-dock-upload {
+    padding: 8px 14px;
+    font-size: 0.82rem;
+  }
+
+  .btn-dock-locked {
+    padding: 6px 12px;
+    font-size: 0.78rem;
+  }
+}

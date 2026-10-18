@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>K-Wall — A Global Wall of People</title>
+  
+  <!-- SEO & Social OpenGraph -->
+  <meta name="description" content="One world. One wall. One photo per person per day. Share your daily moment on the global digital canvas.">
+  <meta property="og:title" content="K-Wall — A Global Wall of People">
+  <meta property="og:description" content="A giant, living global wall filled with moments, memories, and people from all over the world.">
+  <meta property="og:image" content="/assets/logo.svg">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#08090d">
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Modern Google Typography & Poster Display Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@700&family=Permanent+Marker&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="/css/variables.css?v=4.1">
+  <link rel="stylesheet" href="/css/main.css?v=4.1">
+  <link rel="stylesheet" href="/css/wall.css?v=4.1">
+  <link rel="stylesheet" href="/css/controls.css?v=4.1">
+  <link rel="stylesheet" href="/css/modals.css?v=4.1">
+  <link rel="stylesheet" href="/css/wallpaper.css?v=4.1">
+</head>
+<body class="theme-obsidian">
+  <div id="app">
+    <!-- Ambient Background Glow -->
+    <div class="ambient-glow"></div>
+
+    <!-- The Global Wall Viewport -->
+    <main id="wall-viewport" class="wall-viewport" tabindex="0" aria-label="Global Photo Mosaic Wall">
+      <div id="wall-grid" class="wall-grid layout-collage">
+        <!-- Photo tiles dynamically rendered by wall.js -->
+      </div>
+    </main>
+
+    <!-- Centered K-Wall Logo (Non-intrusive Glassmorphic Overlay) -->
+    <div id="center-logo" class="wall-center-logo">
+      <div class="logo-badge" id="logo-badge" title="Click to view wall information">
+        <div class="logo-brand">
+          <img src="/assets/logo.svg" alt="K-Wall Emblem" class="logo-icon-svg">
+          <h1 class="logo-title">K-<span>WALL</span></h1>
+        </div>
+        <div class="logo-subtitle">A Global Wall of People</div>
+        <div class="logo-stats">
+          <span class="pulse-dot"></span>
+          <span id="wall-stats-text">Live • Connecting People Worldwide</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wallpaper Mode Exit Pill (Visible on hover when in wallpaper mode) -->
+    <div class="wallpaper-exit-pill" id="wallpaper-exit-pill">
+      <button class="btn btn-secondary" id="btn-exit-wallpaper">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+        Exit Fullscreen Wallpaper
+      </button>
+    </div>
+
+    <!-- Floating Bottom Controls Dock -->
+    <footer class="bottom-dock-wrapper" id="bottom-dock-wrapper">
+      <nav class="bottom-dock" aria-label="K-Wall Main Navigation">
+        <!-- 1. Daily Upload Action Button (Dynamic State) -->
+        <button id="btn-dock-upload" class="btn-dock-upload" title="Share your daily photo and message">
+          <span class="plus-icon">+</span>
+          <span id="upload-btn-label">Upload Today</span>
+        </button>
+
+        <button id="btn-dock-locked" class="btn-dock-locked" style="display: none;" title="Daily limit reached. Resets at 00:00 UTC">
+          <span class="lock-icon-wrapper">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <span>Next photo in <span class="countdown-digits" id="dock-countdown-text">--:--:--</span></span>
+        </button>
+
+        <div class="dock-divider"></div>
+
+        <!-- 2. Live Wallpaper Button -->
+        <button id="btn-dock-wallpaper" class="dock-btn" title="Use K-Wall as Live Wallpaper on PC & Mobile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Wallpaper</span>
+        </button>
+
+        <!-- 3. Share Button -->
+        <button id="btn-dock-share" class="dock-btn" title="Share K-Wall with the world">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <span>Share</span>
+        </button>
+
+        <!-- 4. Messages Inbox Button (when signed in) -->
+        <button id="btn-dock-messages" class="dock-btn" style="display: none;" title="Private Messages">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Messages</span>
+          <span id="dock-unread-badge" class="badge-unread" style="display: none;">0</span>
+        </button>
+
+        <div class="dock-divider"></div>
+
+        <!-- 5. Profile / Sign In Trigger -->
+        <div id="dock-auth-container">
+          <button id="btn-dock-signin" class="btn btn-secondary btn-sm" style="padding: 7px 14px; font-size: 0.82rem;">
+            Sign In
+          </button>
+          
+          <button id="btn-dock-profile" class="dock-profile-btn" style="display: none;" title="View Your Profile and Settings">
+            <img id="dock-avatar-img" class="dock-avatar" src="" alt="Profile">
+            <span id="dock-username-label" class="profile-name">Profile</span>
+          </button>
+        </div>
+      </nav>
+    </footer>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" aria-live="polite"></div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Upload Modal -->
+    <div id="modal-upload" class="modal-overlay">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Add to K-Wall
+          </div>
+          <button class="modal-close" data-close>&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="upload-form">
+            <!-- Dropzone / File Picker -->
+            <div id="upload-dropzone" class="dropzone">
+              <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <div class="dropzone-text">Click to choose a photo, or drag & drop</div>
+              <div class="dropzone-subtext">Supports JPG, PNG, WEBP, GIF (up to 10MB)</div>
+              <input type="file" id="upload-file-input" accept="image/jpeg,image/png,image/webp,image/gif" style="display: none;">
+            </div>
+
+            <!-- Image Preview Box -->
+            <div id="upload-preview-box" class="upload-preview-wrapper" style="display: none;">
+              <img id="upload-preview-img" class="upload-preview-img" src="" alt="Photo Preview">
+              <button type="button" id="btn-remove-preview" class="btn-remove-preview" title="Remove photo">&times;</button>
+            </div>
+
+            <!-- Message Field -->
+            <div class="form-group">
+              <label class="form-label" for="upload-message-input">Your Personal Message (max 150 chars)</label>
+              <textarea id="upload-message-input" class="form-textarea" maxlength="150" placeholder="Share a reflection, a memory, or greetings from your corner of the earth..." required></textarea>
+              <div id="upload-char-counter" class="char-counter">0 / 150</div>
+            </div>
+
+            <!-- Location Field -->
+            <div class="form-group">
+              <label class="form-label" for="upload-location-input">Your City / Location (Optional)</label>
+              <input type="text" id="upload-location-input" class="form-input" placeholder="e.g. Kyoto, Japan or Cape Town, South Africa">
+            </div>
+
+            <!-- Poster Style & Format Selector -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="upload-style-select">Poster Style</label>
+                <select id="upload-style-select" class="form-select">
+                  <option value="fullbleed" selected>Cinematic Full-Bleed</option>
+                  <option value="bold-yellow">Bold Yellow Script ("Good Vibes")</option>
+                  <option value="distressed-red">Crimson Stencil ("Comfort Zone")</option>
+                  <option value="framed-white">Framed Gallery Print ("Ideas...")</option>
+                  <option value="dark-gritty">Athletic Monochrome ("Conquer")</option>
+                  <option value="minimal-dark">Obsidian Minimalist ("Try")</option>
+                  <option value="navy-quote">Deep Navy ("Dream. Plan. Do.")</option>
+                  <option value="retro-pop">Retro Pop Graffiti ("Rise & Grind")</option>
+                  <option value="vintage-cream">Vintage Typewriter</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="upload-aspect-select">Poster Format</label>
+                <select id="upload-aspect-select" class="form-select">
+                  <option value="tall" selected>Tall Poster (2:3)</option>
+                  <option value="xtall">Stories Vertical (9:16)</option>
+                  <option value="standard">Standard Print (3:4)</option>
+                  <option value="square">Square Tile (1:1)</option>
+                  <option value="wide">Wide Portrait (4:5)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Daily Rule Notice -->
+            <div class="upload-rule-callout">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <div>
+                <strong>Global Rule:</strong> One photo per person per calendar day (UTC). Your upload becomes an enduring piece of today's collective memory.
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close>Cancel</button>
+          <button type="button" id="btn-submit-upload" class="btn btn-primary">
+            <span>Publish to Global Wall</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post Detail Modal -->
+    <div id="modal-post-detail" class="modal-overlay">
+      <div class="modal-dialog modal-dialog-large">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span id="detail-date-badge" class="badge">Today</span>
+            <span id="detail-views-count" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;"></span>
+          </div>
+          <button class="modal-close" data-close>&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 0;">
+          <div class="post-detail-layout">
+            <div class="post-detail-image-box">
+              <img id="detail-img" src="" alt="K-Wall Post Moment">
+            </div>
+            <div class="post-detail-content">
+              <div>
+                <div class="post-author-row">
+                  <div class="post-author-info" id="detail-author-btn">
+                    <img id="detail-avatar" class="post-author-avatar" src="" alt="Author">
+                    <div>
+                      <div id="detail-display-name" class="post-author-name"></div>
+                      <div id="detail-username" class="post-author-sub"></div>
+                    </div>
+                  </div>
+                  <div id="detail-location-badge" class="badge"></div>
+                </div>
+
+                <div class="post-message-box">
+                  <div class="post-quote" id="detail-message"></div>
+                </div>
+
+                <div class="post-meta-details">
+                  <div class="post-meta-item">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span id="detail-timestamp-relative"></span>
+                    <span style="opacity: 0.5;">•</span>
+                    <span id="detail-timestamp-utc" style="font-family: var(--font-mono); font-size: 0.75rem;"></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Toolbar -->
+              <div class="post-actions-toolbar">
+                <button class="btn btn-secondary btn-sm" id="btn-detail-view-profile">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  View Profile
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btn-detail-message">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  Message
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btn-detail-share">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                  Share
+                </button>
+                <button class="btn btn-outline btn-sm" id="btn-detail-report" style="margin-left: auto;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                  Report
+                </button>
+                <button class="btn btn-danger btn-sm" id="btn-detail-delete" style="display: none;">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auth Modal (Sign In / Register) -->
+    <div id="modal-auth" class="modal-overlay">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Join the Global Canvas
+          </div>
+          <button class="modal-close" data-close>&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-tabs">
+            <button class="tab-btn active" id="tab-login-btn">Sign In</button>
+            <button class="tab-btn" id="tab-register-btn">Create Account</button>
+          </div>
+
+          <!-- Sign In Form -->
+          <form id="form-login">
+            <div class="form-group">
+              <label class="form-label" for="login-identifier">Username or Email</label>
+              <input type="text" id="login-identifier" class="form-input" placeholder="e.g. alexchen or alex@example.com" required autocomplete="username">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="login-password">Password</label>
+              <input type="password" id="login-password" class="form-input" placeholder="Enter password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Sign In</button>
+          </form>
+
+          <!-- Register Form -->
+          <form id="form-register" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" for="reg-username">Username (Unique, letters & numbers)</label>
+              <input type="text" id="reg-username" class="form-input" placeholder="e.g. sophie_paris" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-name">Display Name</label>
+              <input type="text" id="reg-name" class="form-input" placeholder="e.g. Sophie Mercier" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-email">Email Address</label>
+              <input type="email" id="reg-email" class="form-input" placeholder="sophie@example.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-password">Password (min 6 characters)</label>
+              <input type="password" id="reg-password" class="form-input" placeholder="Create password" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-location">City & Country</label>
+              <input type="text" id="reg-location" class="form-input" placeholder="e.g. Paris, France">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Create Account</button>
+          </form>
+
+          <!-- Quick Demo Logins for Instant Pair-Testing -->
+          <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-subtle);">
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;">Instant Quick Sign In</div>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-quick-demo" style="flex: 1;">
+                Sign in as Alex (Demo User)
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-quick-admin" style="flex: 1;">
+                Sign in as Curator (Admin)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div id="modal-profile" class="modal-overlay">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title" id="profile-modal-title">User Profile</div>
+          <button class="modal-close" data-close>&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-tabs" id="profile-tabs">
+            <button class="tab-btn active" id="tab-profile-view">Profile</button>
+            <button class="tab-btn" id="tab-profile-history">Upload History</button>
+            <button class="tab-btn" id="tab-profile-edit" style="display: none;">Edit Profile</button>
+            <button class="tab-btn" id="tab-profile-blocks" style="display: none;">Blocked</button>
+          </div>
+
+          <!-- Profile View Tab -->
+          <div id="profile-view-tab">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+              <img id="profile-avatar-display" class="post-author-avatar" style="width: 64px; height: 64px;" src="" alt="Avatar">
+              <div>
+                <h3 id="profile-name-display" style="font-size: 1.2rem; color: #fff; margin-bottom: 4px;"></h3>
+                <div id="profile-username-display" style="color: var(--text-muted); font-size: 0.88rem;"></div>
+                <div id="profile-location-display" style="color: var(--accent-cyan); font-size: 0.82rem; margin-top: 4px;"></div>
+              </div>
+            </div>
+
+            <div id="profile-bio-box" class="post-message-box" style="margin-bottom: 16px;">
+              <div id="profile-bio-display" style="font-size: 0.92rem; color: var(--text-primary);"></div>
+            </div>
+
+            <div style="display: flex; gap: 16px; font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 20px;">
+              <div><strong>Joined:</strong> <span id="profile-joined-display"></span></div>
+              <div><strong>Moments on K-Wall:</strong> <span id="profile-posts-count-display">0</span></div>
+            </div>
+
+            <div id="profile-actions-bar" style="display: flex; gap: 10px;">
+              <button class="btn btn-primary btn-sm" id="btn-profile-message">Send Private Message</button>
+              <button class="btn btn-outline btn-sm" id="btn-profile-block">Block User</button>
+            </div>
+          </div>
+
+          <!-- Upload History Tab -->
+          <div id="profile-history-tab" style="display: none;">
+            <div style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 10px;">Past photos contributed to the global wall:</div>
+            <div id="profile-history-grid" class="profile-history-grid"></div>
+          </div>
+
+          <!-- Edit Profile Tab (For logged in user) -->
+          <div id="profile-edit-tab" style="display: none;">
+            <form id="form-edit-profile">
+              <div class="form-group">
+                <label class="form-label" for="edit-display-name">Display Name</label>
+                <input type="text" id="edit-display-name" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="edit-bio">Bio (Max 300 chars)</label>
+                <textarea id="edit-bio" class="form-textarea" maxlength="300"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="edit-location">Location</label>
+                <input type="text" id="edit-location" class="form-input">
+              </div>
+              <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+            </form>
+          </div>
+
+          <!-- Blocked Users Tab -->
+          <div id="profile-blocked-tab" style="display: none;">
+            <div id="blocked-users-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          </div>
+        </div>
+        <div class="modal-footer" id="profile-modal-footer">
+          <button class="btn btn-danger btn-sm" id="btn-logout" style="margin-right: auto; display: none;">Sign Out</button>
+          <button class="btn btn-secondary btn-sm" data-close>Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Private Chat Modal -->
+    <div id="modal-chat" class="modal-overlay">
+      <div class="modal-dialog modal-dialog-large">
+        <div class="modal-header">
+          <div class="modal-title" style="gap: 12px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span id="chat-header-title">Private Messages</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn btn-outline btn-sm" id="btn-chat-block-user" style="display: none; padding: 4px 10px; font-size: 0.75rem;">Block</button>
+            <button class="modal-close" data-close>&times;</button>
+          </div>
+        </div>
+        <div class="modal-body" style="padding: 0;">
+          <div class="chat-layout">
+            <!-- Sidebar: Conversations List -->
+            <div class="chat-sidebar" id="chat-conversations-list">
+              <!-- Dynamically rendered conversations -->
+            </div>
+            <!-- Main Chat Area -->
+            <div class="chat-main">
+              <div id="chat-messages-container" class="chat-messages-scroll">
+                <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-top: 40px;">Select a conversation to start messaging.</div>
+              </div>
+              <form id="chat-send-form" class="chat-input-bar">
+                <input type="text" id="chat-input-text" class="form-input" placeholder="Type a private message..." maxlength="1000" autocomplete="off" disabled>
+                <button type="submit" id="btn-chat-send" class="btn btn-primary btn-sm" disabled>Send</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Wallpaper Suite Modal -->
+    <div id="modal-wallpaper" class="modal-overlay">
+      <div class="modal-dialog modal-dialog-large">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Live Wallpaper Experience
+          </div>
+          <button class="modal-close" data-close>&times;</button>
+        </div>
+        <div class="modal-body">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 2px;">Turn K-Wall into a Live Dynamic Wallpaper</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary);">Enjoy a living canvas of humanity on your desktop monitor, laptop, or phone.</p>
+            </div>
+            <button class="btn btn-primary" id="btn-enter-fullscreen-wallpaper">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              Start Fullscreen Wall
+            </button>
+          </div>
+
+          <!-- Wallpaper Customization Grid -->
+          <div class="wallpaper-settings-grid">
+            <!-- Grid Density -->
+            <div class="setting-card">
+              <div class="setting-card-title">Grid Density</div>
+              <div class="setting-options-row" id="density-options">
+                <button type="button" class="option-chip" data-density="compact">Compact (Dense)</button>
+                <button type="button" class="option-chip active" data-density="balanced">Balanced</button>
+                <button type="button" class="option-chip" data-density="relaxed">Relaxed</button>
+              </div>
+            </div>
+
+
+            <!-- Appearance Theme -->
+            <div class="setting-card">
+              <div class="setting-card-title">Theme Palette</div>
+              <div class="setting-options-row" id="theme-options">
+                <button type="button" class="option-chip active" data-theme="obsidian">Obsidian Dark</button>
+                <button type="button" class="option-chip" data-theme="cyber">Cyber Glow</button>
+                <button type="button" class="option-chip" data-theme="midnight">Midnight Blue</button>
+                <button type="button" class="option-chip" data-theme="monochrome">Monochrome</button>
+              </div>
+            </div>
+
+            <!-- Elements Visibility -->
+            <div class="setting-card">
+              <div class="setting-card-title">Display Elements</div>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="toggle-wallpaper-logo" checked> Show Centered Logo
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="toggle-wallpaper-tooltips" checked> Hover Message Previews
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="toggle-wallpaper-motion"> Subtle Ambient Breathing
+                </label>
+              </div>
+            </div>
+
+            <!-- Direct Shareable Link -->
+            <div class="setting-card">
+              <div class="setting-card-title">Shareable Live-Wall Link</div>
+              <p style="font-size: 0.76rem; color: var(--text-muted);">Use for Raspberry Pi, smart TVs, or browser kiosks.</p>
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-live-link">
+                Copy Wallpaper URL
+              </button>
+            </div>
+          </div>
+
+          <!-- Installation & Setup Guides -->
+          <h4 style="font-size: 0.95rem; color: #fff; margin-bottom: 8px;">Installation & Integration Guides</h4>
+          <div class="guide-accordion">
+            <!-- Windows Guide -->
+            <div class="guide-item open">
+              <div class="guide-header">
+                <span>Windows 10 / 11 (Lively Wallpaper or Wallpaper Engine)</span>
+                <span>▾</span>
+              </div>
+              <div class="guide-content">
+                <div class="guide-steps">
+                  <div>1. Download free open-source <strong>Lively Wallpaper</strong> (from Microsoft Store or GitHub) or open <strong>Wallpaper Engine</strong>.</div>
+                  <div>2. Select <em>Add Wallpaper</em> &rarr; <em>Web / URL</em>.</div>
+                  <div>3. Paste your live K-Wall link:
+                    <div class="guide-code-box" id="guide-url-box-win">http://localhost:3000/?wallpaper=true</div>
+                  </div>
+                  <div>4. Click Apply to enjoy the live updating wall as your Windows desktop wallpaper!</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mobile Phone Guide -->
+            <div class="guide-item">
+              <div class="guide-header">
+                <span>Mobile Phones (Android & iPhone PWA)</span>
+                <span>▾</span>
+              </div>
+              <div class="guide-content">
+                <div class="guide-steps">
+                  <div>1. Tap your browser share or menu button (Chrome/Safari).</div>
+                  <div>2. Select <strong>Add to Home Screen</strong> or <strong>Install App</strong>.</div>
+                  <div>3. Open K-Wall from your home screen — it runs in fullscreen standalone app mode without browser bars!</div>
+                  <div style="margin-top: 6px;">
+                    <button class="btn btn-secondary btn-sm" id="btn-pwa-install" style="display: none;">Install K-Wall PWA Now</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- macOS Guide -->
+            <div class="guide-item">
+              <div class="guide-header">
+                <span>macOS (Plash or WebScreenSaver)</span>
+                <span>▾</span>
+              </div>
+              <div class="guide-content">
+                <div class="guide-steps">
+                  <div>1. Install <strong>Plash</strong> (free on Mac App Store) to turn any website into your desktop wallpaper.</div>
+                  <div>2. Add your K-Wall Live URL to Plash.</div>
+                  <div>3. Enable "Open at Login" for a continuous global wallpaper on macOS!</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-close>Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="modal-share" class="modal-overlay">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            <span id="share-modal-title">Share K-Wall</span>
+          </div>
+          <button class="modal-close" data-close>&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="share-modal-desc" style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 16px;">
+            Invite friends to share their daily photo on the world's shared canvas.
+          </p>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+            <input type="text" id="share-link-input" class="form-input" readonly>
+            <button class="btn btn-primary" id="btn-copy-share-link">Copy</button>
+          </div>
+
+          <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 10px;">Share to Social Networks</div>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+            <a href="#" class="btn btn-secondary btn-sm" id="btn-share-x" target="_blank" rel="noopener">X / Twitter</a>
+            <a href="#" class="btn btn-secondary btn-sm" id="btn-share-whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+            <a href="#" class="btn btn-secondary btn-sm" id="btn-share-telegram" target="_blank" rel="noopener">Telegram</a>
+            <a href="#" class="btn btn-secondary btn-sm" id="btn-share-reddit" target="_blank" rel="noopener">Reddit</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Report Modal -->
+    <div id="modal-report" class="modal-overlay">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-rose)" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            Report Content
+          </div>
+          <button class="modal-close" data-close>&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="form-report">
+            <input type="hidden" id="report-target-type" value="post">
+            <input type="hidden" id="report-target-id" value="">
+
+            <div class="form-group">
+              <label class="form-label">Reason for reporting</label>
+              <select id="report-reason" class="form-select" required>
+                <option value="Inappropriate or offensive imagery">Inappropriate or offensive imagery</option>
+                <option value="Hate speech, harassment, or bullying">Hate speech, harassment, or bullying</option>
+                <option value="Commercial spam or bot content">Commercial spam or bot content</option>
+                <option value="Copyright violation or stolen photo">Copyright violation or stolen photo</option>
+                <option value="Personal private information exposed">Personal private information exposed</option>
+                <option value="Other">Other violation</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="report-details">Additional details (Optional)</label>
+              <textarea id="report-details" class="form-textarea" placeholder="Help our moderation team understand the issue..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-danger" style="width: 100%;">Submit Report for Moderation</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client JavaScript Modules -->
+  <script src="/js/api.js?v=4.1"></script>
+  <script src="/js/socket.js?v=4.1"></script>
+  <script src="/js/wall.js?v=4.1"></script>
+  <script src="/js/controls.js?v=4.1"></script>
+  <script src="/js/upload.js?v=4.1"></script>
+  <script src="/js/post-detail.js?v=4.1"></script>
+  <script src="/js/chat.js?v=4.1"></script>
+  <script src="/js/profile.js?v=4.1"></script>
+  <script src="/js/wallpaper.js?v=4.1"></script>
+  <script src="/js/share.js?v=4.1"></script>
+  <script src="/js/auth.js?v=4.1"></script>
+  <script src="/js/app.js?v=4.1"></script>
+</body>
+</html>

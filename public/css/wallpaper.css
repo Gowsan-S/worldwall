@@ -1,0 +1,184 @@
+/* Live Wallpaper Mode Styles */
+body.mode-wallpaper {
+  overflow: hidden !important;
+}
+
+/* In wallpaper mode, controls dock auto-hides unless mouse hovers near bottom */
+body.mode-wallpaper .bottom-dock-wrapper {
+  transform: translateY(120px);
+  transition: transform var(--trans-smooth), opacity var(--trans-smooth);
+  opacity: 0;
+}
+
+body.mode-wallpaper:hover .bottom-dock-wrapper {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Wallpaper exit indicator floating at top right */
+.wallpaper-exit-pill {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: var(--z-controls);
+  opacity: 0;
+  transition: opacity var(--trans-base);
+  pointer-events: none;
+}
+
+body.mode-wallpaper:hover .wallpaper-exit-pill,
+body.mode-wallpaper .wallpaper-exit-pill:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Wallpaper Themes */
+body.theme-obsidian {
+  --bg-primary: #050608;
+  --bg-secondary: #0c0e14;
+}
+
+body.theme-cyber {
+  --bg-primary: #08071a;
+  --bg-secondary: #120e2e;
+  --accent-cyan: #06b6d4;
+  --border-glow: rgba(168, 85, 247, 0.4);
+}
+
+body.theme-midnight {
+  --bg-primary: #030712;
+  --bg-secondary: #0f172a;
+}
+
+body.theme-monochrome {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #171717;
+  filter: grayscale(80%);
+}
+
+/* Ambient Motion for Wallpaper (Slow Ken Burns Breathing) */
+body.wallpaper-ambient-motion .wall-tile img {
+  animation: wallpaperBreathe 24s ease-in-out infinite alternate;
+}
+
+@keyframes wallpaperBreathe {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06) translate(-1%, -1%); }
+  100% { transform: scale(1); }
+}
+
+/* Wallpaper Configuration Suite Cards */
+.wallpaper-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+  margin-bottom: 24px;
+}
+
+.setting-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setting-card-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.setting-options-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.option-chip {
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.option-chip:hover {
+  color: #ffffff;
+  border-color: var(--border-light);
+}
+
+.option-chip.active {
+  background: var(--accent-cyan);
+  color: #05070b;
+  border-color: var(--accent-cyan);
+}
+
+/* Guides accordion */
+.guide-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.guide-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.guide-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  transition: background var(--trans-fast);
+}
+
+.guide-header:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.guide-content {
+  padding: 0 18px 16px 18px;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  display: none;
+}
+
+.guide-item.open .guide-content {
+  display: block;
+}
+
+.guide-steps {
+  margin-left: 20px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.guide-code-box {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 8px 12px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent-cyan);
+  margin-top: 6px;
+  user-select: text;
+}
