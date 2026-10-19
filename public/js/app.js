@@ -23,6 +23,24 @@ const App = {
 
     // 4. Check URL parameters for direct links (e.g., ?post=123)
     this.checkInitialUrlParams();
+
+    // 5. Verify active session token to prevent stale login states
+    this.verifyUserSession();
+  },
+
+  verifyUserSession() {
+    if (API.getToken()) {
+      API.getMe().then(res => {
+        if (res && res.user) {
+          API.setUser(res.user);
+          Controls.updateButtonState();
+        }
+      }).catch(err => {
+        console.warn('[World Wall] Stale or invalid session. Resetting auth state:', err.message);
+        API.clearAuth();
+        Controls.updateButtonState();
+      });
+    }
   },
 
   bindGlobalEvents() {

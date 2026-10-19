@@ -109,6 +109,12 @@ const API = {
     });
   },
 
+  guestLogin() {
+    return this.request('/auth/guest', {
+      method: 'POST'
+    });
+  },
+
   register(userData) {
     return this.request('/auth/register', {
       method: 'POST',

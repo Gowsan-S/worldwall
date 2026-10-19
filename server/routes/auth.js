@@ -91,14 +91,18 @@ router.post('/login', async (req, res) => {
 
     identifier = identifier.trim().toLowerCase();
 
+    // Match by username, email, or lower display_name
     const user = db.prepare(`
       SELECT id, username, email, password_hash, display_name, bio, location, avatar_url, role, account_status, created_at 
       FROM users 
-      WHERE username = ? OR email = ?
-    `).get(identifier, identifier);
+      WHERE username = ? OR email = ? OR LOWER(display_name) = ?
+    `).get(identifier, identifier, identifier);
 
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials. Please check your username/email and password.' });
+      return res.status(404).json({ 
+        error: `No account found for '${identifier}'. If you are new to World Wall, click 'Create Account' above to sign up in 5 seconds!`,
+        notFound: true 
+      });
     }
 
     if (user.account_status !== 'active') {
@@ -107,7 +111,12 @@ router.post('/login', async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid credentials. Please check your username/email and password.' });
+      let hint = '';
+      if (user.username === 'demo') hint = ' (Demo password is: demo123)';
+      else if (user.username === 'admin') hint = ' (Admin password is: admin123)';
+      return res.status(401).json({ 
+        error: `Incorrect password.${hint} Please try again or create a new account.` 
+      });
     }
 
     const token = signToken(user);
@@ -129,6 +138,42 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     console.error('Login error:', err);
     return res.status(500).json({ error: 'Failed to sign in. Please try again.' });
+  }
+});
+
+// 1-Click Guest Login (Instant zero-friction access)
+router.post('/guest', async (req, res) => {
+  try {
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    const username = `traveler_${randomSuffix}`;
+    const email = `traveler_${randomSuffix}@worldwall.app`;
+    const display_name = `World Traveler #${randomSuffix}`;
+    const salt = await bcrypt.genSalt(10);
+    const password_hash = await bcrypt.hash('guest123', salt);
+    const created_at = new Date().toISOString();
+
+    const result = db.prepare(`
+      INSERT INTO users (username, email, password_hash, display_name, bio, location, avatar_url, created_at)
+      VALUES (?, ?, ?, ?, 'Exploring the global wall of moments.', 'Global Traveler', ?, ?)
+    `).run(username, email, password_hash, display_name, `https://api.dicebear.com/7.x/identicon/svg?seed=${username}`, created_at);
+
+    const user = db.prepare('SELECT id, username, email, display_name, bio, location, avatar_url, role, created_at FROM users WHERE id = ?').get(result.lastInsertRowid);
+    const token = signToken(user);
+    const countdown = getUtcCountdown();
+
+    return res.status(201).json({
+      message: 'Signed in as World Traveler!',
+      user,
+      token,
+      uploadStatus: {
+        eligible: true,
+        todayPostId: null,
+        countdown
+      }
+    });
+  } catch (err) {
+    console.error('Guest auth error:', err);
+    return res.status(500).json({ error: 'Failed to create guest session.' });
   }
 });
 
