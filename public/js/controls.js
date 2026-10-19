@@ -21,7 +21,7 @@ const Controls = {
     this.uploadBtn.addEventListener('click', () => {
       const user = API.getUser();
       if (!user) {
-        App.showToast('Please sign in or create an account to share your photo on K-Wall.', 'info');
+        App.showToast('Please sign in or create an account to share your photo on World Wall.', 'info');
         Auth.open('login');
       } else {
         Upload.open();
@@ -127,7 +127,7 @@ const Controls = {
   },
 
   onMidnightReached() {
-    console.log('[K-Wall] UTC Midnight reached.');
+    console.log('[World Wall] UTC Midnight reached.');
   },
 
   updateButtonState() {
@@ -144,7 +144,9 @@ const Controls = {
       messagesBtn.style.display = 'flex';
 
       document.getElementById('dock-avatar-img').src = user.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${user.username}`;
-      document.getElementById('dock-username-label').textContent = user.display_name.split(' ')[0];
+      const name = user.display_name || 'World Wall';
+      const labelText = /world wall/i.test(name) ? 'World Wall' : name.split(' ')[0];
+      document.getElementById('dock-username-label').textContent = labelText;
 
       // Unlimited uploads: always show upload button, hide locked button
       this.uploadBtn.style.display = 'flex';

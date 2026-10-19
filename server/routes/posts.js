@@ -48,7 +48,7 @@ router.get('/eligibility', optionalAuth, (req, res) => {
     return res.json({
       authenticated: false,
       eligible: true,
-      message: 'Sign in to share your photo on K-Wall.',
+      message: 'Sign in to share your photo on World Wall.',
       countdown
     });
   }
@@ -117,7 +117,7 @@ router.get('/', (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching wall posts:', err);
-    return res.status(500).json({ error: 'Failed to load K-Wall posts.' });
+    return res.status(500).json({ error: 'Failed to load World Wall posts.' });
   }
 });
 
@@ -255,7 +255,7 @@ router.post('/', requireAuth, upload.single('photo'), (req, res) => {
     const updatedCountdown = getUtcCountdown();
 
     return res.status(201).json({
-      message: 'Your moment is now live on K-Wall for the world to see!',
+      message: 'Your moment is now live on World Wall for the world to see!',
       post: newPost,
       uploadStatus: {
         eligible: true,

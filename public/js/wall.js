@@ -1,6 +1,7 @@
 // =========================================================
-// K-WALL — Freeform Overlapping Poster Collage Engine
-// Inspired by Reference Image 2: Dense, Layered, Artistic Wall
+// WORLD WALL — 77-Poster Full-Viewport Collage Engine
+// Exactly 77 photos simultaneously, zero scrolling,
+// newest photo in foreground, center WORLD WALL logo fixed
 // =========================================================
 
 const Wall = {
@@ -8,12 +9,11 @@ const Wall = {
   viewportEl: null,
   posts: [],
   totalCount: 0,
-  limit: 150,
-  offset: 0,
+  TARGET_CARDS: 77,
   isLoading: false,
-  hasMore: true,
   resizeTimer: null,
   cachedWidth: 0,
+  cachedHeight: 0,
 
   THEMES: [
     'bold-yellow',       // "Good Vibes only!" style
@@ -31,30 +31,23 @@ const Wall = {
     this.gridEl = document.getElementById('wall-grid');
     this.viewportEl = document.getElementById('wall-viewport');
     this.cachedWidth = window.innerWidth;
+    this.cachedHeight = window.innerHeight;
 
     this.bindEvents();
     this.loadInitialPosts();
   },
 
   bindEvents() {
-    // Infinite scroll - loads more posts when approaching bottom
-    this.viewportEl.addEventListener('scroll', () => {
-      if (this.isLoading || !this.hasMore) return;
-      const { scrollTop, scrollHeight, clientHeight } = this.viewportEl;
-      if (scrollTop + clientHeight >= scrollHeight - 450) {
-        this.loadMorePosts();
-      }
-    });
-
-    // Window Resize with debounce
+    // Window Resize with debounce: recalculates card sizes & positions so collage fits viewport without scrolling
     window.addEventListener('resize', () => {
       clearTimeout(this.resizeTimer);
       this.resizeTimer = setTimeout(() => {
-        if (Math.abs(window.innerWidth - this.cachedWidth) > 30) {
+        if (Math.abs(window.innerWidth - this.cachedWidth) > 10 || Math.abs(window.innerHeight - this.cachedHeight) > 10) {
           this.cachedWidth = window.innerWidth;
+          this.cachedHeight = window.innerHeight;
           this.render();
         }
-      }, 180);
+      }, 100);
     });
 
     // Real-time WebSocket events
@@ -79,180 +72,157 @@ const Wall = {
   async loadInitialPosts() {
     this.isLoading = true;
     try {
-      const data = await API.getPosts(this.limit, 0);
+      // Request up to 150 posts so we have plenty to draw the 77 cards from
+      const data = await API.getPosts(150, 0);
       this.posts = data.posts || [];
       this.totalCount = data.totalCount || this.posts.length;
-      this.offset = this.posts.length;
-      this.hasMore = this.offset < this.totalCount;
 
       this.render();
       this.updateStatsDisplay();
     } catch (err) {
       console.error('Failed to load initial wall posts:', err);
-      App.showToast('Unable to load K-Wall moments. Check connection.', 'error');
+      App.showToast('Unable to load World Wall moments. Check connection.', 'error');
     } finally {
       this.isLoading = false;
     }
   },
 
-  async loadMorePosts() {
-    if (this.isLoading || !this.hasMore) return;
-    this.isLoading = true;
+  // Deterministic 77-Card Viewport Mosaic Algorithm
+  // Fits strictly inside the visible window (100dvh, 0 scroll)
+  calculatePositions(vw, vh, count) {
+    let cols = 11;
+    let rows = 7;
 
-    try {
-      const data = await API.getPosts(this.limit, this.offset);
-      const newPosts = data.posts || [];
-      if (newPosts.length === 0) {
-        this.hasMore = false;
-      } else {
-        this.posts.push(...newPosts);
-        this.offset += newPosts.length;
-        this.hasMore = this.offset < data.totalCount;
-        this.render();
-      }
-    } catch (err) {
-      console.error('Error fetching more posts:', err);
-    } finally {
-      this.isLoading = false;
-    }
-  },
-
-  // Deterministic Gap-Free Collage Packing Algorithm
-  calculatePositions(viewportWidth) {
-    // Determine number of placement columns/tracks
-    let numTracks;
-    if (viewportWidth >= 1700) {
-      numTracks = 8;
-    } else if (viewportWidth >= 1350) {
-      numTracks = 7;
-    } else if (viewportWidth >= 1000) {
-      numTracks = 6;
-    } else if (viewportWidth >= 680) {
-      numTracks = 5;
-    } else if (viewportWidth >= 460) {
-      numTracks = 4;
-    } else {
-      numTracks = 3; // Mobile Portrait
+    const aspect = vw / vh;
+    if (aspect < 1.1) {
+      cols = 7;
+      rows = 11;
+    } else if (aspect < 1.35) {
+      cols = 9;
+      rows = 9;
     }
 
-    // Apply density adjustment if set from wallpaper controls
-    if (this.density === 'compact') {
-      numTracks += 1;
-    } else if (this.density === 'relaxed' && numTracks > 3) {
-      numTracks -= 1;
+    const cellW = vw / cols;
+    const cellH = vh / rows;
+
+    const logoCenter = { x: vw / 2, y: vh / 2 };
+    const logoProtected = { w: 230, h: 160 };
+
+    // 1. Build all grid cells
+    const cells = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const centerX = (c + 0.5) * cellW;
+        const centerY = (r + 0.5) * cellH;
+        const dx = (centerX - logoCenter.x) / cellW;
+        const dy = (centerY - logoCenter.y) / cellH;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        cells.push({ c, r, centerX, centerY, dist });
+      }
     }
 
-    // Track spacing ensures posters bleed nicely over left and right boundaries
-    const trackSpacing = viewportWidth / (numTracks - 0.25);
+    // 2. Center-outward priority sorting:
+    // Newest post (index 0) gets prominent position adjacent to center logo (e.g. directly above logo at col 5, row 2)
+    // The exact center cell (5, 3) where the logo sits is placed behind the logo with lowest visual disturbance
+    const centerC = Math.floor(cols / 2);
+    const centerR = Math.floor(rows / 2);
 
-    // Initial staggered top coordinates for each column track (positive, fully visible at top of viewport)
-    const initialTops = [15, 28, 12, 32, 20, 14, 26, 18];
-    const tracks = new Array(numTracks).fill(0).map((_, t) => initialTops[t % initialTops.length]);
-
-    const positions = [];
-
-    this.posts.forEach((post, i) => {
-      const seed = (post.id || (i + 1)) * 41 + (i % 7);
-
-      // 1. Choose size factor - posters are wider than trackSpacing so adjacent columns overlap!
-      const sizeRand = this.pseudoRandom(seed);
-      let widthFactor;
-      if (sizeRand < 0.20) {
-        widthFactor = 1.34 + this.pseudoRandom(seed + 1) * 0.16;
-      } else if (sizeRand < 0.65) {
-        widthFactor = 1.22 + this.pseudoRandom(seed + 2) * 0.14;
-      } else if (sizeRand < 0.85) {
-        widthFactor = 1.15 + this.pseudoRandom(seed + 3) * 0.12;
-      } else {
-        widthFactor = 1.08 + this.pseudoRandom(seed + 4) * 0.10;
-      }
-
-      let width = Math.round(trackSpacing * widthFactor);
-      if (numTracks <= 3) {
-        width = Math.min(width, Math.round(viewportWidth * 0.68));
-      }
-
-      // 2. Determine aspect ratio
-      let ratio;
-      const aspectStyle = post.aspect_ratio || '';
-      if (aspectStyle === 'xtall' || aspectStyle === '9:16') {
-        ratio = 1.58 + this.pseudoRandom(seed + 5) * 0.14;
-      } else if (aspectStyle === 'tall' || aspectStyle === '2:3') {
-        ratio = 1.36 + this.pseudoRandom(seed + 5) * 0.12;
-      } else if (aspectStyle === 'standard' || aspectStyle === '3:4') {
-        ratio = 1.22 + this.pseudoRandom(seed + 5) * 0.10;
-      } else if (aspectStyle === 'wide' || aspectStyle === '16:10') {
-        ratio = 0.82 + this.pseudoRandom(seed + 5) * 0.12;
-      } else if (aspectStyle === 'square' || aspectStyle === '1:1') {
-        ratio = 1.0;
-      } else {
-        const rRand = this.pseudoRandom(seed + 6);
-        if (rRand < 0.42) ratio = 1.38 + this.pseudoRandom(seed + 7) * 0.14;
-        else if (rRand < 0.72) ratio = 1.22 + this.pseudoRandom(seed + 7) * 0.12;
-        else if (rRand < 0.88) ratio = 1.58 + this.pseudoRandom(seed + 7) * 0.14;
-        else ratio = 0.84 + this.pseudoRandom(seed + 7) * 0.12;
-      }
-
-      const height = Math.round(width * ratio);
-
-      // 3. Find track with shortest height (greedy bin packing eliminates gaps)
-      let trackIdx = 0;
-      for (let t = 1; t < numTracks; t++) {
-        if (tracks[t] < tracks[trackIdx]) {
-          trackIdx = t;
-        }
-      }
-
-      // 4. Calculate X (Horizontal position with subtle organic jitter & edge bleed)
-      const baseLeft = Math.round(trackIdx * trackSpacing - 30);
-      const jitterX = Math.round((this.pseudoRandom(seed + 8) - 0.5) * (trackSpacing * 0.22));
-      const left = baseLeft + jitterX;
-
-      // 5. Calculate Y:
-      // First poster in a track starts at initial top (no negative offset clipping)
-      // Subsequent posters overlap the previous poster by 70px to 115px
-      let top;
-      if (tracks[trackIdx] <= 40) {
-        top = tracks[trackIdx];
-      } else {
-        const overlapY = Math.round(70 + this.pseudoRandom(seed + 9) * 45);
-        top = Math.round(tracks[trackIdx] - overlapY);
-      }
-
-      // 6. Update track heights and distribute weight across adjacent tracks
-      tracks[trackIdx] = top + height;
-      if (trackIdx + 1 < numTracks) {
-        tracks[trackIdx + 1] = Math.max(tracks[trackIdx + 1], top + Math.round(height * 0.45));
-      }
-      if (trackIdx - 1 >= 0) {
-        tracks[trackIdx - 1] = Math.max(tracks[trackIdx - 1], top + Math.round(height * 0.45));
-      }
-
-      // 7. Calculate Rotation (-3.2deg to +3.2deg)
-      const rotate = Number(((this.pseudoRandom(seed + 10) - 0.5) * 6.4).toFixed(2));
-
-      // 8. Stacking order:
-      // Newest posts (index 0, 1, 2...) are in FRONT (highest zIndex: 260, 256, 252...)
-      // Older posts layer behind them, down to zIndex: 10
-      const zIndex = Math.max(10, 260 - i * 4);
-
-      positions.push({ left, top, width, height, rotate, zIndex });
+    cells.sort((a, b) => {
+      const isCenterA = (a.c === centerC && a.r === centerR);
+      const isCenterB = (b.c === centerC && b.r === centerR);
+      const distA = isCenterA ? 2.5 : a.dist;
+      const distB = isCenterB ? 2.5 : b.dist;
+      return distA - distB;
     });
 
-    const maxCanvasHeight = Math.max(...tracks) + 160;
-    return { positions, maxCanvasHeight };
+    const positions = [];
+    const totalToPlace = Math.min(count, cells.length);
+
+    for (let i = 0; i < totalToPlace; i++) {
+      const cell = cells[i];
+      const post = this.posts[i] || {};
+      const seed = ((post.id || (i + 1)) * 43) + (cell.r * cols + cell.c) * 17;
+
+      // Card sizing: 35% - 50% smaller than previous oversized posters
+      // Varied widths (0.92 to 1.15 x cellW) for organic mosaic feel
+      const sizeMult = 0.92 + this.pseudoRandom(seed + 1) * 0.23;
+      const width = Math.round(cellW * sizeMult);
+
+      // Aspect ratio
+      let ar = 1.25;
+      const aspectStyle = post.aspect_ratio || '';
+      if (aspectStyle === 'xtall' || aspectStyle === '9:16') {
+        ar = 1.38;
+      } else if (aspectStyle === 'tall' || aspectStyle === '2:3') {
+        ar = 1.32;
+      } else if (aspectStyle === 'standard' || aspectStyle === '3:4') {
+        ar = 1.20;
+      } else if (aspectStyle === 'square' || aspectStyle === '1:1') {
+        ar = 1.0;
+      } else {
+        const arRand = this.pseudoRandom(seed + 2);
+        if (arRand < 0.35) ar = 1.34;
+        else if (arRand < 0.70) ar = 1.20;
+        else if (arRand < 0.85) ar = 1.0;
+        else ar = 1.38;
+      }
+
+      let height = Math.round(width * ar);
+      // Cap height so it fits within cell allowance without vertical overflow
+      height = Math.min(height, Math.round(cellH * 1.25));
+
+      // Organic subtle jitter
+      let posX = cell.centerX + (this.pseudoRandom(seed + 3) - 0.5) * (cellW * 0.18);
+      let posY = cell.centerY + (this.pseudoRandom(seed + 4) - 0.5) * (cellH * 0.16);
+
+      // Repel from center logo protected area
+      const dLogoX = posX - logoCenter.x;
+      const dLogoY = posY - logoCenter.y;
+      if (Math.abs(dLogoX) < (logoProtected.w / 2 + width * 0.32) &&
+          Math.abs(dLogoY) < (logoProtected.h / 2 + height * 0.32)) {
+        const signX = dLogoX >= 0 ? 1 : -1;
+        const signY = dLogoY >= 0 ? 1 : -1;
+        posX += signX * (cellW * 0.18);
+        posY += signY * (cellH * 0.16);
+      }
+
+      let left = Math.round(posX - width / 2);
+      let top = Math.round(posY - height / 2);
+
+      // STRICT CLAMP WITHIN VIEWPORT (Zero scroll)
+      left = Math.max(2, Math.min(vw - width - 2, left));
+      top = Math.max(2, Math.min(vh - height - 2, top));
+
+      // Subtle rotation (-2.8deg to +2.8deg)
+      const rotate = Number(((this.pseudoRandom(seed + 5) - 0.5) * 5.6).toFixed(2));
+
+      // Stacking order:
+      // Index 0 (newest upload) gets 350 (top foreground)
+      // Existing cards layer beneath: 345, 340, ... down to 10
+      // (Center logo is at 500, toolbar at 600)
+      const zIndex = Math.max(10, 350 - i * 4);
+
+      positions.push({ left, top, width, height, rotate, zIndex });
+    }
+
+    return positions;
   },
 
   render() {
-    const viewportWidth = window.innerWidth;
-    const { positions, maxCanvasHeight } = this.calculatePositions(viewportWidth);
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    // Display exactly 77 photo cards when >= 77 available, or all available if fewer
+    const targetCount = Math.min(this.posts.length, this.TARGET_CARDS);
+    const visiblePosts = this.posts.slice(0, targetCount);
+
+    const positions = this.calculatePositions(vw, vh, visiblePosts.length);
 
     this.gridEl.innerHTML = '';
-    this.gridEl.style.height = `${maxCanvasHeight}px`;
 
     const fragment = document.createDocumentFragment();
 
-    this.posts.forEach((post, i) => {
+    visiblePosts.forEach((post, i) => {
       const pos = positions[i];
       if (!pos) return;
 
@@ -343,24 +313,19 @@ const Wall = {
   prependLivePost(post) {
     if (this.posts.some(p => p.id === post.id)) return;
 
+    // Add new post to the top of collection
     this.posts.unshift(post);
     this.totalCount += 1;
 
-    // Re-render whole canvas seamlessly
+    // Re-render the 77-card collage:
+    // The new post takes index 0 in the prominent foreground position (zIndex: 350)
+    // The 78th oldest visible card drops off the screen without being deleted from the DB
     this.render();
-
-    // Smoothly scroll viewport to the top so user immediately sees their photo
-    if (this.viewportEl) {
-      this.viewportEl.scrollTo({ top: 0, behavior: 'smooth' });
-    }
 
     // Trigger spotlight animation on the newly placed poster
     const newEl = this.gridEl.querySelector(`[data-post-id="${post.id}"]`);
     if (newEl) {
       newEl.classList.add('just-added');
-      setTimeout(() => {
-        newEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      }, 80);
     }
 
     this.updateStatsDisplay();
@@ -382,10 +347,7 @@ const Wall = {
   },
 
   updateStatsDisplay() {
-    const statsEl = document.getElementById('wall-stats-text');
-    if (statsEl) {
-      statsEl.textContent = `${this.totalCount.toLocaleString()} moments worldwide • Live`;
-    }
+    // Stats text badge removed per design request
   },
 
   setDensity(density) {

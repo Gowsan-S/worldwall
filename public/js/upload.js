@@ -3,33 +3,57 @@ const Upload = {
   modal: null,
   dropzone: null,
   fileInput: null,
+  previewHeader: null,
+  formatTag: null,
   previewBox: null,
   previewImg: null,
   removePreviewBtn: null,
+  changePhotoBtn: null,
+  changePhotoWrap: null,
+  samplePhotoBtn: null,
   messageInput: null,
   locationInput: null,
   charCounter: null,
   submitBtn: null,
+  styleSelect: null,
+  aspectSelect: null,
+  posterCard: null,
+  previewLocation: null,
+  previewAuthor: null,
+  previewHeadline: null,
   selectedFile: null,
 
   init() {
     this.modal = document.getElementById('modal-upload');
     this.dropzone = document.getElementById('upload-dropzone');
     this.fileInput = document.getElementById('upload-file-input');
+    this.previewHeader = document.getElementById('upload-preview-header');
+    this.formatTag = document.getElementById('preview-format-tag');
     this.previewBox = document.getElementById('upload-preview-box');
     this.previewImg = document.getElementById('upload-preview-img');
     this.removePreviewBtn = document.getElementById('btn-remove-preview');
+    this.changePhotoBtn = document.getElementById('btn-change-photo');
+    this.changePhotoWrap = document.getElementById('upload-change-photo-wrap');
+    this.samplePhotoBtn = document.getElementById('btn-sample-photo');
     this.messageInput = document.getElementById('upload-message-input');
     this.locationInput = document.getElementById('upload-location-input');
     this.charCounter = document.getElementById('upload-char-counter');
     this.submitBtn = document.getElementById('btn-submit-upload');
+    this.styleSelect = document.getElementById('upload-style-select');
+    this.aspectSelect = document.getElementById('upload-aspect-select');
+    this.posterCard = document.getElementById('upload-poster-card');
+    this.previewLocation = document.getElementById('preview-location-text');
+    this.previewAuthor = document.getElementById('preview-author-text');
+    this.previewHeadline = document.getElementById('preview-headline-text');
 
     this.bindEvents();
   },
 
   bindEvents() {
     // Dropzone & File selection
-    this.dropzone.addEventListener('click', () => {
+    this.dropzone.addEventListener('click', (e) => {
+      // Don't trigger if clicked sample photo button
+      if (e.target.closest('#btn-sample-photo')) return;
       this.fileInput.click();
     });
 
@@ -38,6 +62,23 @@ const Upload = {
         this.handleFileSelected(e.target.files[0]);
       }
     });
+
+    // Sample photo test button
+    if (this.samplePhotoBtn) {
+      this.samplePhotoBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        await this.loadSamplePhoto();
+      });
+    }
+
+    // Change photo quick button
+    if (this.changePhotoBtn) {
+      this.changePhotoBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.fileInput.click();
+      });
+    }
 
     // Drag and drop
     ['dragenter', 'dragover'].forEach(eventName => {
@@ -66,15 +107,77 @@ const Upload = {
       this.clearSelectedFile();
     });
 
-    // Character counter
-    this.messageInput.addEventListener('input', () => {
-      this.updateCharCounter();
+    // Character counter & live message preview
+    ['input', 'keyup', 'change'].forEach(evt => {
+      this.messageInput.addEventListener(evt, () => {
+        this.updateCharCounter();
+        this.updateLivePreview();
+      });
     });
+
+    // Location live preview
+    if (this.locationInput) {
+      ['input', 'keyup', 'change'].forEach(evt => {
+        this.locationInput.addEventListener(evt, () => {
+          this.updateLivePreview();
+        });
+      });
+    }
+
+    // Poster style live preview
+    if (this.styleSelect) {
+      ['change', 'input'].forEach(evt => {
+        this.styleSelect.addEventListener(evt, () => {
+          this.updateLivePreview();
+        });
+      });
+    }
+
+    // Poster format / aspect ratio live preview
+    if (this.aspectSelect) {
+      ['change', 'input'].forEach(evt => {
+        this.aspectSelect.addEventListener(evt, () => {
+          this.updateLivePreview();
+        });
+      });
+    }
 
     // Submit
     this.submitBtn.addEventListener('click', () => {
       this.submit();
     });
+  },
+
+  async loadSamplePhoto() {
+    try {
+      // Create a canvas with a stylish modern gradient landscape as sample photo
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 1200;
+      const ctx = canvas.getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 800, 1200);
+      grad.addColorStop(0, '#0f172a');
+      grad.addColorStop(0.3, '#1e293b');
+      grad.addColorStop(0.6, '#0369a1');
+      grad.addColorStop(1, '#0284c7');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 800, 1200);
+
+      // Add atmospheric glow
+      ctx.beginPath();
+      ctx.arc(400, 600, 320, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.25)';
+      ctx.fill();
+
+      // Convert canvas to blob
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const file = new File([blob], 'sample-photo.png', { type: 'image/png' });
+        this.handleFileSelected(file);
+      }, 'image/png');
+    } catch (err) {
+      console.warn('Sample photo error:', err);
+    }
   },
 
   handleFileSelected(file) {
@@ -94,7 +197,14 @@ const Upload = {
     reader.onload = (e) => {
       this.previewImg.src = e.target.result;
       this.dropzone.style.display = 'none';
-      this.previewBox.style.display = 'block';
+      if (this.previewHeader) {
+        this.previewHeader.style.display = 'flex';
+      }
+      this.previewBox.style.display = 'flex';
+      if (this.changePhotoWrap) {
+        this.changePhotoWrap.style.display = 'block';
+      }
+      this.updateLivePreview();
     };
     reader.readAsDataURL(file);
   },
@@ -103,8 +213,93 @@ const Upload = {
     this.selectedFile = null;
     this.fileInput.value = '';
     this.previewImg.src = '';
+    if (this.previewHeader) {
+      this.previewHeader.style.display = 'none';
+    }
     this.previewBox.style.display = 'none';
+    if (this.changePhotoWrap) {
+      this.changePhotoWrap.style.display = 'none';
+    }
     this.dropzone.style.display = 'flex';
+  },
+
+  updateLivePreview() {
+    if (!this.posterCard) return;
+
+    const style = this.styleSelect ? this.styleSelect.value : 'fullbleed';
+    const aspect = this.aspectSelect ? this.aspectSelect.value : 'tall';
+    const rawMessage = this.messageInput ? this.messageInput.value : '';
+    const location = this.locationInput ? this.locationInput.value.trim() : '';
+    const user = API.getUser();
+
+    // 1. Update theme class on poster card
+    const themeClasses = Array.from(this.posterCard.classList).filter(c => c.startsWith('poster-theme-'));
+    themeClasses.forEach(c => this.posterCard.classList.remove(c));
+    this.posterCard.classList.add(`poster-theme-${style}`);
+
+    // 2. Update aspect ratio on preview wrapper
+    if (this.previewBox) {
+      const aspectClasses = Array.from(this.previewBox.classList).filter(c => c.startsWith('aspect-'));
+      aspectClasses.forEach(c => this.previewBox.classList.remove(c));
+      this.previewBox.classList.add(`aspect-${aspect}`);
+    }
+
+    // Update aspect format text tag
+    if (this.formatTag && this.aspectSelect) {
+      const selectedOption = this.aspectSelect.options[this.aspectSelect.selectedIndex];
+      if (selectedOption) {
+        this.formatTag.textContent = selectedOption.textContent;
+      }
+    }
+
+    // 3. Update author stamp
+    if (this.previewLocation) {
+      let loc = 'GLOBAL';
+      if (location) {
+        loc = location.split(',')[0].toUpperCase();
+      } else if (user && user.location) {
+        loc = user.location.split(',')[0].toUpperCase();
+      }
+      this.previewLocation.textContent = loc;
+    }
+
+    if (this.previewAuthor) {
+      let name = 'YOU';
+      if (user && user.display_name) {
+        name = user.display_name.split(' ')[0].toUpperCase();
+      }
+      this.previewAuthor.textContent = name;
+    }
+
+    // 4. Update headline text with theme-specific styling and default taglines
+    const themeDefaults = {
+      'fullbleed': 'Your personal message...',
+      'bold-yellow': 'Good Vibes Only',
+      'distressed-red': 'COMFORT ZONE WILL KILL YOU',
+      'framed-white': 'IDEAS ARE WORTHLESS UNTIL EXECUTED',
+      'dark-gritty': 'CONQUER FROM WITHIN',
+      'minimal-dark': 'TRY HARD ENOUGH',
+      'navy-quote': 'dream. plan. do.',
+      'retro-pop': 'RISE & GRIND',
+      'vintage-cream': 'Notes from the journey...'
+    };
+
+    if (this.previewHeadline) {
+      const hasCustomText = rawMessage.trim().length > 0;
+      const displayMsg = hasCustomText ? rawMessage.trim() : (themeDefaults[style] || 'Your personal message...');
+
+      if (hasCustomText) {
+        this.previewHeadline.classList.remove('is-placeholder');
+      } else {
+        this.previewHeadline.classList.add('is-placeholder');
+      }
+
+      let clean = (typeof Wall !== 'undefined' && Wall.escapeHtml) ? Wall.escapeHtml(displayMsg) : displayMsg;
+      if (style === 'minimal-dark') {
+        clean = clean.replace(/\b(HARD|ENOUGH|TRY|NOW|LIMIT|WILL|COMFORT|KILL|NOTHING|WORK|GROW)\b/gi, '<span class="highlight">$1</span>');
+      }
+      this.previewHeadline.innerHTML = clean;
+    }
   },
 
   updateCharCounter() {
@@ -128,6 +323,7 @@ const Upload = {
       this.locationInput.value = user.location;
     }
 
+    this.updateLivePreview();
     this.modal.classList.add('active');
   },
 
@@ -178,12 +374,17 @@ const Upload = {
 
       const res = await API.uploadPost(formData);
 
-      App.showToast('Your moment is now live on K-Wall for the entire world!', 'success');
+      App.showToast('Your moment is now live on World Wall for the entire world!', 'success');
       this.close();
 
       // Prepend to wall immediately
       if (res.post) {
         Wall.prependLivePost(res.post);
+
+        // Automatically open the Viral Social Media Share Card Suite
+        setTimeout(() => {
+          Share.openForPost(res.post, true);
+        }, 800);
       }
 
       // Update eligibility button state

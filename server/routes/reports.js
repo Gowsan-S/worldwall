@@ -39,7 +39,7 @@ router.post('/', requireAuth, (req, res) => {
     }
 
     return res.status(201).json({
-      message: 'Thank you for helping keep K-Wall safe. Your report has been submitted for moderation review.'
+      message: 'Thank you for helping keep World Wall safe. Your report has been submitted for moderation review.'
     });
   } catch (err) {
     console.error('Error submitting report:', err);

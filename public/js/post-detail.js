@@ -59,7 +59,7 @@ const PostDetail = {
     // Delete button
     document.getElementById('btn-detail-delete').addEventListener('click', async () => {
       if (!this.currentPost) return;
-      if (!confirm('Are you sure you want to remove this photo from K-Wall?')) return;
+      if (!confirm('Are you sure you want to remove this photo from World Wall?')) return;
 
       try {
         await API.deletePost(this.currentPost.id);

@@ -66,7 +66,7 @@ router.post('/register', async (req, res) => {
     const countdown = getUtcCountdown();
 
     return res.status(201).json({
-      message: 'Account created successfully! Welcome to K-Wall.',
+      message: 'Account created successfully! Welcome to World Wall.',
       user,
       token,
       uploadStatus: {

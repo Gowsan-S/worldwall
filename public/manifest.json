@@ -1,6 +1,6 @@
 {
-  "name": "K-Wall — A Global Wall of People",
-  "short_name": "K-Wall",
+  "name": "World Wall — One Wall Endless Story",
+  "short_name": "World Wall",
   "description": "One world. One wall. One photo per person per day. A living digital canvas connecting humanity.",
   "start_url": "/",
   "display": "standalone",
@@ -9,10 +9,16 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "/assets/logo.svg",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml",
+      "src": "/assets/logo.png",
+      "sizes": "606x476 192x192 512x512",
+      "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }

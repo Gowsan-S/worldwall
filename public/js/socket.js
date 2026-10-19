@@ -12,7 +12,7 @@ const Socket = {
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
-        console.log('[K-Wall WS] Connected to live wall stream');
+        console.log('[World Wall WS] Connected to live wall stream');
         if (this.reconnectTimer) {
           clearTimeout(this.reconnectTimer);
           this.reconnectTimer = null;
@@ -24,20 +24,20 @@ const Socket = {
           const data = JSON.parse(event.data);
           this.emit(data.type, data);
         } catch (e) {
-          console.error('[K-Wall WS] Invalid message format:', e);
+          console.error('[World Wall WS] Invalid message format:', e);
         }
       };
 
       this.ws.onclose = () => {
-        console.log('[K-Wall WS] Connection closed. Reconnecting in 3s...');
+        console.log('[World Wall WS] Connection closed. Reconnecting in 3s...');
         this.scheduleReconnect();
       };
 
       this.ws.onerror = (err) => {
-        console.error('[K-Wall WS] Socket error:', err);
+        console.error('[World Wall WS] Socket error:', err);
       };
     } catch (err) {
-      console.error('[K-Wall WS] Init error:', err);
+      console.error('[World Wall WS] Init error:', err);
       this.scheduleReconnect();
     }
   },

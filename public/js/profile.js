@@ -59,6 +59,22 @@ const Profile = {
       }
     });
 
+    // Share Photo Card from Profile
+    const btnProfileShareCard = document.getElementById('btn-profile-share-card');
+    if (btnProfileShareCard) {
+      btnProfileShareCard.addEventListener('click', () => {
+        const targetPost = (this.currentUserPosts && this.currentUserPosts.length > 0)
+          ? this.currentUserPosts[0]
+          : null;
+        this.close();
+        if (targetPost) {
+          Share.openForPost(targetPost);
+        } else {
+          Share.openForMyMoments();
+        }
+      });
+    }
+
     // Logout
     document.getElementById('btn-logout').addEventListener('click', () => {
       API.clearAuth();
@@ -82,6 +98,7 @@ const Profile = {
       const data = await API.getUserProfile(identifier);
       const user = data.profile;
       this.currentUserProfile = user;
+      this.currentUserPosts = data.posts || [];
 
       const loggedInUser = API.getUser();
       this.isSelf = isSelfExplicit || (loggedInUser && loggedInUser.id === user.id);
@@ -127,12 +144,19 @@ const Profile = {
       const blocksTabBtn = document.getElementById('tab-profile-blocks');
       const actionsBar = document.getElementById('profile-actions-bar');
       const logoutBtn = document.getElementById('btn-logout');
+      const msgBtn = document.getElementById('btn-profile-message');
+      const blockBtn = document.getElementById('btn-profile-block');
+      const shareCardBtn = document.getElementById('btn-profile-share-card');
+
+      if (actionsBar) actionsBar.style.display = 'flex';
 
       if (this.isSelf) {
-        editTabBtn.style.display = 'inline-block';
-        blocksTabBtn.style.display = 'inline-block';
-        actionsBar.style.display = 'none';
-        logoutBtn.style.display = 'inline-flex';
+        if (editTabBtn) editTabBtn.style.display = 'inline-block';
+        if (blocksTabBtn) blocksTabBtn.style.display = 'inline-block';
+        if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+        if (msgBtn) msgBtn.style.display = 'none';
+        if (blockBtn) blockBtn.style.display = 'none';
+        if (shareCardBtn) shareCardBtn.style.display = (this.currentUserPosts.length > 0) ? 'inline-flex' : 'none';
 
         // Pre-fill edit inputs
         document.getElementById('edit-display-name').value = user.display_name;
@@ -141,10 +165,12 @@ const Profile = {
 
         this.loadBlockedUsers();
       } else {
-        editTabBtn.style.display = 'none';
-        blocksTabBtn.style.display = 'none';
-        actionsBar.style.display = 'flex';
-        logoutBtn.style.display = 'none';
+        if (editTabBtn) editTabBtn.style.display = 'none';
+        if (blocksTabBtn) blocksTabBtn.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (msgBtn) msgBtn.style.display = 'inline-flex';
+        if (blockBtn) blockBtn.style.display = 'inline-flex';
+        if (shareCardBtn) shareCardBtn.style.display = (this.currentUserPosts.length > 0) ? 'inline-flex' : 'none';
       }
 
       this.switchTab('view');

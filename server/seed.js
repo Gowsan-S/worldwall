@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const { db, getTodayUtcDate } = require('./db');
 
 const SEED_USERS = [
-  { username: 'admin', email: 'admin@kwall.world', displayName: 'K-Wall Curator', role: 'admin', location: 'Geneva, Switzerland', bio: 'Curator & guardian of the global human wall.' },
+  { username: 'admin', email: 'admin@kwall.world', displayName: 'World Wall Curator', role: 'admin', location: 'Geneva, Switzerland', bio: 'Curator & guardian of the global human wall.' },
   { username: 'demo', email: 'demo@kwall.world', displayName: 'Alex Chen', role: 'user', location: 'San Francisco, USA', bio: 'Street photographer and poster artist.' },
   { username: 'kenji_tokyo', email: 'kenji@kwall.world', displayName: 'Kenji Takahashi', location: 'Tokyo, Japan', bio: 'Finding quiet zen moments in a neon metropolis.' },
   { username: 'amara_nairobi', email: 'amara@kwall.world', displayName: 'Amara Kiprono', location: 'Nairobi, Kenya', bio: 'Coffee lover, solar engineer, sunrise chaser.' },
@@ -55,7 +55,35 @@ const SEED_USERS = [
   { username: 'nadia_tunis', email: 'nadia@kwall.world', displayName: 'Nadia Trabelsi', location: 'Tunis, Tunisia', bio: 'Blue and white doors of Sidi Bou Said.' },
   { username: 'sam_seattle', email: 'sam@kwall.world', displayName: 'Samira Patel', location: 'Seattle, USA', bio: 'Pine scents, evergreen ferries, and dark espresso.' },
   { username: 'leo_montreal', email: 'leo@kwall.world', displayName: 'Léo Tremblay', location: 'Montreal, Canada', bio: 'Autumn maple colors and Mile End bagels.' },
-  { username: 'anja_ljubljana', email: 'anja@kwall.world', displayName: 'Anja Vidmar', location: 'Ljubljana, Slovenia', bio: 'Emerald river waters under the castle hill.' }
+  { username: 'anja_ljubljana', email: 'anja@kwall.world', displayName: 'Anja Vidmar', location: 'Ljubljana, Slovenia', bio: 'Emerald river waters under the castle hill.' },
+  { username: 'lucas_manila', email: 'lucas@kwall.world', displayName: 'Lucas Reyes', location: 'Manila, Philippines', bio: 'Sunset over Manila bay and vibrant street art.' },
+  { username: 'mei_taipei', email: 'mei@kwall.world', displayName: 'Mei-Ling Chen', location: 'Taipei, Taiwan', bio: 'Night market aromas and misty mountain trails.' },
+  { username: 'aleks_warsaw', email: 'aleks@kwall.world', displayName: 'Aleksander Wisniewski', location: 'Warsaw, Poland', bio: 'Modern energy amidst reconstructed history.' },
+  { username: 'dimitris_athens', email: 'dimitris@kwall.world', displayName: 'Dimitris Kostas', location: 'Athens, Greece', bio: 'Olive groves and ancient marble under golden sun.' },
+  { username: 'zofia_krakow', email: 'zofia@kwall.world', displayName: 'Zofia Nowak', location: 'Krakow, Poland', bio: 'Jazz cellars and snow falling on cobblestones.' },
+  { username: 'tariq_amman', email: 'tariq_a@kwall.world', displayName: 'Tariq Mansoor', location: 'Amman, Jordan', bio: 'Desert tea around the evening fire.' },
+  { username: 'inga_bergen', email: 'inga@kwall.world', displayName: 'Inga Hansen', location: 'Bergen, Norway', bio: 'Seven mountains and rainy harbor reflections.' },
+  { username: 'hugo_porto', email: 'hugo@kwall.world', displayName: 'Hugo Ribeiro', location: 'Porto, Portugal', bio: 'Rooftops glowing terracotta at sunset.' },
+  { username: 'siti_kl', email: 'siti@kwall.world', displayName: 'Siti Nurhaliza', location: 'Kuala Lumpur, Malaysia', bio: 'Twin towers rising above tropical rain.' },
+  { username: 'budi_jakarta', email: 'budi@kwall.world', displayName: 'Budi Hartono', location: 'Jakarta, Indonesia', bio: 'City that never sleeps, endless warmth.' },
+  { username: 'clara_valpo', email: 'clara@kwall.world', displayName: 'Clara Soto', location: 'Valparaiso, Chile', bio: 'Bohemian murals and Pacific sea air.' },
+  { username: 'gabriel_havana', email: 'gabriel@kwall.world', displayName: 'Gabriel Diaz', location: 'Havana, Cuba', bio: 'Classic cars, trumpet solos, and salt air.' },
+  { username: 'mia_melbourne', email: 'mia@kwall.world', displayName: 'Mia Watson', location: 'Melbourne, Australia', bio: 'Laneway espresso and street art murals.' },
+  { username: 'oscar_stockholm', email: 'oscar@kwall.world', displayName: 'Oscar Berg', location: 'Stockholm, Sweden', bio: 'Fika conversations and Baltic sailing.' },
+  { username: 'leonie_lyon', email: 'leonie@kwall.world', displayName: 'Léonie Blanc', location: 'Lyon, France', bio: 'Bistros, silk history, and two rivers meeting.' },
+  { username: 'artur_riga', email: 'artur@kwall.world', displayName: 'Arturs Kalnins', location: 'Riga, Latvia', bio: 'Art Nouveau spires and Baltic amber.' },
+  { username: 'mariam_tbilisi', email: 'mariam@kwall.world', displayName: 'Mariam Beridze', location: 'Tbilisi, Georgia', bio: 'Balconies carved in wood, mountain wine.' },
+  { username: 'fernando_lima', email: 'fernando@kwall.world', displayName: 'Fernando Vargas', location: 'Lima, Peru', bio: 'Cliffs of Miraflores and fresh ceviche.' },
+  { username: 'chi_saigon', email: 'chi@kwall.world', displayName: 'Nguyen Chi', location: 'Ho Chi Minh City, Vietnam', bio: 'Motorbike waves and iced coffee.' },
+  { username: 'yasmin_doha', email: 'yasmin@kwall.world', displayName: 'Yasmin Al-Kaabi', location: 'Doha, Qatar', bio: 'Pearl waters and modern skylines.' },
+  { username: 'dante_florence', email: 'dante@kwall.world', displayName: 'Dante Moretti', location: 'Florence, Italy', bio: 'Arno reflections and renaissance bells.' },
+  { username: 'sara_reynosa', email: 'sara@kwall.world', displayName: 'Sara Mendez', location: 'Monterrey, Mexico', bio: 'Cerro de la Silla against purple dawn.' },
+  { username: 'kenan_sarajevo', email: 'kenan@kwall.world', displayName: 'Kenan Hadzic', location: 'Sarajevo, Bosnia', bio: 'Where east meets west across stone bridges.' },
+  { username: 'nadine_zurich', email: 'nadine@kwall.world', displayName: 'Nadine Keller', location: 'Geneva, Switzerland', bio: 'Lakeside breezes and crisp Alpine snow.' },
+  { username: 'matias_montevideo', email: 'matias@kwall.world', displayName: 'Matias Suarez', location: 'Montevideo, Uruguay', bio: 'Rambla walks and sunset mate.' },
+  { username: 'linnea_gothenburg', email: 'linnea@kwall.world', displayName: 'Linnea Eklund', location: 'Gothenburg, Sweden', bio: 'Harbor lights and archipelago ferries.' },
+  { username: 'youssef_alexandria', email: 'youssef@kwall.world', displayName: 'Youssef Nabil', location: 'Alexandria, Egypt', bio: 'Mediterranean sea spray and ancient wisdom.' },
+  { username: 'claudia_cusco', email: 'claudia@kwall.world', displayName: 'Claudia Quispe', location: 'Cusco, Peru', bio: 'High altitude cobblestones and starry nights.' }
 ];
 
 // Rich, authentic poster moments strictly inspired by Reference Image 2
@@ -113,7 +141,34 @@ const SEED_MOMENTS = [
   { img: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=600&q=80', msg: 'FEAR IS A LIAR', style: 'dark-gritty', aspect: 'tall' },
   { img: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=600&q=80', msg: 'SMALL STEPS EVERY SINGLE DAY', style: 'vintage-cream', aspect: 'standard' },
   { img: 'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&w=600&q=80', msg: 'PRESSURE MAKES DIAMONDS', style: 'distressed-red', aspect: 'tall' },
-  { img: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=600&q=80', msg: 'KEEP LOOKING UP', style: 'framed-white', aspect: 'xtall' }
+  { img: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=600&q=80', msg: 'KEEP LOOKING UP', style: 'framed-white', aspect: 'xtall' },
+  { img: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=600&q=80', msg: 'STAY CURIOUS ALWAYS', style: 'bold-yellow', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&w=600&q=80', msg: 'HUMBLE BEGINNINGS', style: 'dark-gritty', aspect: 'xtall' },
+  { img: 'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?auto=format&fit=crop&w=600&q=80', msg: 'GRATITUDE CHANGES EVERYTHING', style: 'vintage-cream', aspect: 'standard' },
+  { img: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=600&q=80', msg: 'CREATE YOUR OWN REALITY', style: 'retro-pop', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=600&q=80', msg: 'LISTEN TO THE SILENCE', style: 'navy-quote', aspect: 'xtall' },
+  { img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80', msg: 'WANDER OFTEN WONDER ALWAYS', style: 'fullbleed', aspect: 'standard' },
+  { img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80', msg: 'RISE ABOVE THE NOISE', style: 'distressed-red', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=600&q=80', msg: 'KINDNESS IS A SUPERPOWER', style: 'framed-white', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80', msg: 'STAY HUNGRY FOR GROWTH', style: 'minimal-dark', aspect: 'xtall' },
+  { img: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=600&q=80', msg: 'BE THE LIGHT', style: 'bold-yellow', aspect: 'standard' },
+  { img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80', msg: 'KEEP PUSHING FORWARD', style: 'dark-gritty', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80', msg: 'PEACE WITHIN STRENGTH WITHOUT', style: 'navy-quote', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80', msg: 'CODE IS POETRY', style: 'minimal-dark', aspect: 'standard' },
+  { img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80', msg: 'THE WORLD IS BEAUTIFUL', style: 'fullbleed', aspect: 'xtall' },
+  { img: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80', msg: 'DREAM BEYOND BORDERS', style: 'framed-white', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80', msg: 'FOCUS ON WHAT MATTERS', style: 'vintage-cream', aspect: 'standard' },
+  { img: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=600&q=80', msg: 'STAND TALL ALWAYS', style: 'dark-gritty', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80', msg: 'COLOR YOUR WORLD', style: 'retro-pop', aspect: 'xtall' },
+  { img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80', msg: 'SEE THE GOOD IN ALL', style: 'framed-white', aspect: 'standard' },
+  { img: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=600&q=80', msg: 'CONQUER FROM WITHIN', style: 'distressed-red', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80', msg: 'BOLD STEPS ONLY', style: 'bold-yellow', aspect: 'xtall' },
+  { img: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80', msg: 'MOMENTS MAKE LIFE', style: 'vintage-cream', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1516726817505-f5ed825624d8?auto=format&fit=crop&w=600&q=80', msg: 'STRENGTH IN UNITY', style: 'navy-quote', aspect: 'standard' },
+  { img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80', msg: 'LIVE WITH PURPOSE', style: 'fullbleed', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80', msg: 'DISCIPLINE IS FREEDOM', style: 'minimal-dark', aspect: 'xtall' },
+  { img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80', msg: 'NO RETREAT NO SURRENDER', style: 'dark-gritty', aspect: 'tall' },
+  { img: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=600&q=80', msg: 'FOREVER UNSTOPPABLE', style: 'retro-pop', aspect: 'standard' }
 ];
 
 async function seed(force = false) {
@@ -122,7 +177,7 @@ async function seed(force = false) {
   const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
   const postCount = db.prepare('SELECT COUNT(*) as count FROM posts').get().count;
 
-  if (!force && userCount >= 40 && postCount >= 50) {
+  if (!force && userCount >= 80 && postCount >= 85) {
     console.log(`Database already has ${userCount} users and ${postCount} posts.`);
     return;
   }

@@ -1,5 +1,5 @@
-// K-Wall Service Worker — Network-First Strategy for Live Wall
-const CACHE_NAME = 'kwall-collage-v5';
+// World Wall Service Worker — Network-First Strategy for Live Wall
+const CACHE_NAME = 'worldwall-v17';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

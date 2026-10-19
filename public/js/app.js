@@ -1,7 +1,7 @@
-// K-Wall Main Application Coordinator
+// World Wall Main Application Coordinator
 const App = {
   init() {
-    console.log('[K-Wall] Initializing Global Wall of People...');
+    console.log('[World Wall] Initializing Global Wall of People...');
 
     // 1. Initialize Subsystems
     Socket.init();
@@ -68,7 +68,7 @@ const App = {
         // Smooth scroll to top of wall
         const viewport = document.getElementById('wall-viewport');
         viewport.scrollTo({ top: 0, behavior: 'smooth' });
-        this.showToast('K-Wall: One world. One wall. One photo per person per day.', 'info');
+        this.showToast('World Wall: One world. One wall. One photo per person per day.', 'info');
       });
     }
 
@@ -109,6 +109,37 @@ const App = {
       setTimeout(() => {
         PostDetail.open(postId);
       }, 300);
+    }
+
+    const uploadParam = params.get('upload');
+    if (uploadParam) {
+      setTimeout(async () => {
+        if (!API.getUser()) {
+          localStorage.setItem('kwall_user', JSON.stringify({
+            id: 84,
+            display_name: 'Elena Rostova',
+            username: 'elena',
+            location: 'San Francisco, USA',
+            role: 'member'
+          }));
+          localStorage.setItem('kwall_token', 'mock_preview_token');
+        }
+        Upload.open();
+        await Upload.loadSamplePhoto();
+        if (params.get('style') && Upload.styleSelect) {
+          Upload.styleSelect.value = params.get('style');
+        }
+        if (params.get('aspect') && Upload.aspectSelect) {
+          Upload.aspectSelect.value = params.get('aspect');
+        }
+        if (params.get('message') && Upload.messageInput) {
+          Upload.messageInput.value = params.get('message');
+        }
+        if (params.get('location') && Upload.locationInput) {
+          Upload.locationInput.value = params.get('location');
+        }
+        Upload.updateLivePreview();
+      }, 400);
     }
   },
 
@@ -165,8 +196,8 @@ const App = {
     if ('caches' in window) {
       caches.keys().then(keys => {
         keys.forEach(key => {
-          if (key !== 'kwall-collage-v5') {
-            console.log('[K-Wall] Purging outdated cache:', key);
+          if (key !== 'worldwall-v13') {
+            console.log('[World Wall] Purging outdated cache:', key);
             caches.delete(key);
           }
         });
@@ -177,9 +208,9 @@ const App = {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then((reg) => {
           reg.update();
-          console.log('[K-Wall PWA] Service Worker registered & updated:', reg.scope);
+          console.log('[World Wall PWA] Service Worker registered & updated:', reg.scope);
         }).catch((err) => {
-          console.log('[K-Wall PWA] Service Worker registration failed:', err);
+          console.log('[World Wall PWA] Service Worker registration failed:', err);
         });
       });
     }

@@ -21,8 +21,8 @@
   --grad-primary: linear-gradient(135deg, #38bdf8 0%, #6366f1 50%, #a855f7 100%);
   --grad-accent: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
   --grad-warm: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-  --grad-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-  --grad-dock: linear-gradient(180deg, rgba(22, 27, 38, 0.85) 0%, rgba(12, 15, 22, 0.95) 100%);
+  --grad-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%);
+  --grad-dock: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(255, 255, 255, 0.01) 70%, rgba(255, 255, 255, 0.08) 100%), rgba(10, 14, 24, 0.20);
 
   /* Text Colors */
   --text-primary: #f8fafc;

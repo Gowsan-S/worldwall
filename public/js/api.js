@@ -1,4 +1,4 @@
-// K-Wall API Client & Authentication Management
+// World Wall API Client & Authentication Management
 const API = {
   baseUrl: '/api',
 
@@ -17,7 +17,13 @@ const API = {
   getUser() {
     const data = localStorage.getItem('kwall_user');
     try {
-      return data ? JSON.parse(data) : null;
+      if (!data) return null;
+      const user = JSON.parse(data);
+      if (user && user.display_name && /k-wall/i.test(user.display_name)) {
+        user.display_name = user.display_name.replace(/k-wall/gi, 'World Wall');
+        localStorage.setItem('kwall_user', JSON.stringify(user));
+      }
+      return user;
     } catch (e) {
       return null;
     }

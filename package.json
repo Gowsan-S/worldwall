@@ -1,7 +1,7 @@
 {
-  "name": "k-wall",
+  "name": "world-wall",
   "version": "1.0.0",
-  "description": "",
+  "description": "World Wall — A living global digital mosaic canvas of humanity.",
   "main": "index.js",
   "scripts": {
     "start": "node server/index.js",

@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>K-Wall — A Global Wall of People</title>
+  <title>World Wall — One Wall Endless Story</title>
   
   <!-- SEO & Social OpenGraph -->
   <meta name="description" content="One world. One wall. One photo per person per day. Share your daily moment on the global digital canvas.">
-  <meta property="og:title" content="K-Wall — A Global Wall of People">
+  <meta property="og:title" content="World Wall — One Wall Endless Story">
   <meta property="og:description" content="A giant, living global wall filled with moments, memories, and people from all over the world.">
-  <meta property="og:image" content="/assets/logo.svg">
+  <meta property="og:image" content="/assets/logo.png">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#08090d">
-  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
   <link rel="manifest" href="/manifest.json">
 
   <!-- Modern Google Typography & Poster Display Fonts -->
@@ -21,12 +22,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@700&family=Permanent+Marker&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Core Stylesheets -->
-  <link rel="stylesheet" href="/css/variables.css?v=4.1">
-  <link rel="stylesheet" href="/css/main.css?v=4.1">
-  <link rel="stylesheet" href="/css/wall.css?v=4.1">
-  <link rel="stylesheet" href="/css/controls.css?v=4.1">
-  <link rel="stylesheet" href="/css/modals.css?v=4.1">
-  <link rel="stylesheet" href="/css/wallpaper.css?v=4.1">
+  <link rel="stylesheet" href="/css/variables.css?v=5.9">
+  <link rel="stylesheet" href="/css/main.css?v=5.9">
+  <link rel="stylesheet" href="/css/wall.css?v=5.9">
+  <link rel="stylesheet" href="/css/controls.css?v=5.9">
+  <link rel="stylesheet" href="/css/modals.css?v=5.9">
+  <link rel="stylesheet" href="/css/wallpaper.css?v=5.9">
 </head>
 <body class="theme-obsidian">
   <div id="app">
@@ -40,18 +41,10 @@
       </div>
     </main>
 
-    <!-- Centered K-Wall Logo (Non-intrusive Glassmorphic Overlay) -->
+    <!-- Centered World Wall Logo (Glassmorphic Centerpiece Overlay) -->
     <div id="center-logo" class="wall-center-logo">
-      <div class="logo-badge" id="logo-badge" title="Click to view wall information">
-        <div class="logo-brand">
-          <img src="/assets/logo.svg" alt="K-Wall Emblem" class="logo-icon-svg">
-          <h1 class="logo-title">K-<span>WALL</span></h1>
-        </div>
-        <div class="logo-subtitle">A Global Wall of People</div>
-        <div class="logo-stats">
-          <span class="pulse-dot"></span>
-          <span id="wall-stats-text">Live • Connecting People Worldwide</span>
-        </div>
+      <div class="logo-badge" id="logo-badge" title="World Wall — One Wall Endless Story">
+        <img src="/assets/logo.png?v=5.3" alt="World Wall — Created by K" class="center-emblem-img">
       </div>
     </div>
 
@@ -65,11 +58,11 @@
 
     <!-- Floating Bottom Controls Dock -->
     <footer class="bottom-dock-wrapper" id="bottom-dock-wrapper">
-      <nav class="bottom-dock" aria-label="K-Wall Main Navigation">
-        <!-- 1. Daily Upload Action Button (Dynamic State) -->
-        <button id="btn-dock-upload" class="btn-dock-upload" title="Share your daily photo and message">
+      <nav class="bottom-dock" aria-label="World Wall Main Navigation">
+        <!-- 1. Upload Action Button (Unlimited Uploads) -->
+        <button id="btn-dock-upload" class="btn-dock-upload" title="Share a photo and message on World Wall">
           <span class="plus-icon">+</span>
-          <span id="upload-btn-label">Upload Today</span>
+          <span id="upload-btn-label">Upload Photo</span>
         </button>
 
         <button id="btn-dock-locked" class="btn-dock-locked" style="display: none;" title="Daily limit reached. Resets at 00:00 UTC">
@@ -82,13 +75,13 @@
         <div class="dock-divider"></div>
 
         <!-- 2. Live Wallpaper Button -->
-        <button id="btn-dock-wallpaper" class="dock-btn" title="Use K-Wall as Live Wallpaper on PC & Mobile">
+        <button id="btn-dock-wallpaper" class="dock-btn" title="Add World Wall as Live Wallpaper automatically">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          <span>Wallpaper</span>
+          <span>Add Wallpaper</span>
         </button>
 
         <!-- 3. Share Button -->
-        <button id="btn-dock-share" class="dock-btn" title="Share K-Wall with the world">
+        <button id="btn-dock-share" class="dock-btn" title="Share World Wall with the world">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
           <span>Share</span>
         </button>
@@ -127,7 +120,7 @@
         <div class="modal-header">
           <div class="modal-title">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Add to K-Wall
+            Add to World Wall
           </div>
           <button class="modal-close" data-close>&times;</button>
         </div>
@@ -139,12 +132,46 @@
               <div class="dropzone-text">Click to choose a photo, or drag & drop</div>
               <div class="dropzone-subtext">Supports JPG, PNG, WEBP, GIF (up to 10MB)</div>
               <input type="file" id="upload-file-input" accept="image/jpeg,image/png,image/webp,image/gif" style="display: none;">
+              <div style="margin-top: 10px;">
+                <button type="button" id="btn-sample-photo" class="btn btn-secondary btn-sm" style="font-size: 0.74rem; padding: 4px 12px; opacity: 0.88; border-color: rgba(255, 255, 255, 0.2);">
+                  ✨ Try with sample photo
+                </button>
+              </div>
             </div>
 
-            <!-- Image Preview Box -->
-            <div id="upload-preview-box" class="upload-preview-wrapper" style="display: none;">
-              <img id="upload-preview-img" class="upload-preview-img" src="" alt="Photo Preview">
+            <!-- Live Poster Preview Header Indicator -->
+            <div id="upload-preview-header" class="upload-preview-header" style="display: none;">
+              <div class="preview-indicator">
+                <span class="preview-pulse-dot"></span>
+                <span class="preview-status-text">LIVE POSTER PREVIEW</span>
+              </div>
+              <div class="preview-format-tag" id="preview-format-tag">Tall Poster (2:3)</div>
+            </div>
+
+            <!-- Live Poster Preview Box -->
+            <div id="upload-preview-box" class="upload-preview-wrapper aspect-tall" style="display: none;">
+              <div id="upload-poster-card" class="poster-card poster-theme-fullbleed">
+                <div class="poster-media-wrap">
+                  <img id="upload-preview-img" class="upload-preview-img" src="" alt="Photo Preview">
+                </div>
+                <div class="poster-content-layer">
+                  <div class="poster-author-stamp">
+                    <span>📍 <span id="preview-location-text">GLOBAL</span></span>
+                    <span>•</span>
+                    <span id="preview-author-text">YOU</span>
+                  </div>
+                  <div id="preview-headline-text" class="poster-headline">Your personal message...</div>
+                </div>
+              </div>
               <button type="button" id="btn-remove-preview" class="btn-remove-preview" title="Remove photo">&times;</button>
+            </div>
+
+            <!-- Quick Change Photo Button (visible when preview active) -->
+            <div id="upload-change-photo-wrap" style="display: none; text-align: center; margin-top: -6px; margin-bottom: 14px;">
+              <button type="button" id="btn-change-photo" class="btn btn-secondary btn-sm" style="font-size: 0.78rem; padding: 4px 14px; border-color: rgba(255, 255, 255, 0.22);">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: -1px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Change Photo
+              </button>
             </div>
 
             <!-- Message Field -->
@@ -188,11 +215,11 @@
               </div>
             </div>
 
-            <!-- Daily Rule Notice -->
+            <!-- Global Community Notice -->
             <div class="upload-rule-callout">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
               <div>
-                <strong>Global Rule:</strong> One photo per person per calendar day (UTC). Your upload becomes an enduring piece of today's collective memory.
+                <strong>Global Community:</strong> Share your photos, thoughts, and moments anytime. Your uploads become part of the world's collective wall.
               </div>
             </div>
           </form>
@@ -219,7 +246,7 @@
         <div class="modal-body" style="padding: 0;">
           <div class="post-detail-layout">
             <div class="post-detail-image-box">
-              <img id="detail-img" src="" alt="K-Wall Post Moment">
+              <img id="detail-img" src="" alt="World Wall Post Moment">
             </div>
             <div class="post-detail-content">
               <div>
@@ -378,10 +405,11 @@
 
             <div style="display: flex; gap: 16px; font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 20px;">
               <div><strong>Joined:</strong> <span id="profile-joined-display"></span></div>
-              <div><strong>Moments on K-Wall:</strong> <span id="profile-posts-count-display">0</span></div>
+              <div><strong>Moments on World Wall:</strong> <span id="profile-posts-count-display">0</span></div>
             </div>
 
-            <div id="profile-actions-bar" style="display: flex; gap: 10px;">
+            <div id="profile-actions-bar" style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="btn btn-secondary btn-sm" id="btn-profile-share-card">📸 Share Photo Card</button>
               <button class="btn btn-primary btn-sm" id="btn-profile-message">Send Private Message</button>
               <button class="btn btn-outline btn-sm" id="btn-profile-block">Block User</button>
             </div>
@@ -469,15 +497,43 @@
           <button class="modal-close" data-close>&times;</button>
         </div>
         <div class="modal-body">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-            <div>
-              <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 2px;">Turn K-Wall into a Live Dynamic Wallpaper</h3>
-              <p style="font-size: 0.85rem; color: var(--text-secondary);">Enjoy a living canvas of humanity on your desktop monitor, laptop, or phone.</p>
+          <!-- 1-Click Automatic Live Wallpaper Hero Banner -->
+          <div class="wallpaper-auto-banner glass-panel">
+            <div class="wallpaper-auto-content">
+              <div class="wallpaper-auto-tag">
+                <span class="pulse-dot"></span>
+                1-Click Automatic Setup
+              </div>
+              <h3 class="wallpaper-auto-heading">Add World Wall to Your Live Desktop Wallpaper</h3>
+              <p class="wallpaper-auto-sub">
+                Automatically configure and launch World Wall as your live wallpaper with a single click — no manual URL copying or complicated steps required!
+              </p>
+              <div class="wallpaper-auto-actions">
+                <!-- 1. Primary: 1-Click Windows Auto Runner (.bat) -->
+                <button class="btn btn-primary btn-auto-wall" id="btn-auto-add-windows" title="Instantly configures Lively Wallpaper or runs World Wall as live desktop app">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+                  <span>⚡ 1-Click Auto Add to Windows Wallpaper</span>
+                </button>
+
+                <!-- 2. Launch Fullscreen Wall on this Screen -->
+                <button class="btn btn-secondary btn-auto-wall" id="btn-enter-fullscreen-wallpaper" title="Turns this screen into live ambient wallpaper immediately">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                  <span>🖥️ Launch Fullscreen Wall Now</span>
+                </button>
+
+                <!-- 3. Download 1-Click Lively Wallpaper File (.lively) -->
+                <button class="btn btn-outline btn-auto-wall" id="btn-download-lively-pkg" title="Pre-configured Lively Wallpaper package file">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>📥 1-Click Lively File (.lively)</span>
+                </button>
+
+                <!-- 4. Set as Windows Desktop Wallpaper (Instant HD Snapshot) -->
+                <button class="btn btn-outline btn-auto-wall" id="btn-set-desktop-hd" title="Captures current wall and sets it directly as your Windows desktop background image">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  <span>🖼️ Set Desktop Background (HD)</span>
+                </button>
+              </div>
             </div>
-            <button class="btn btn-primary" id="btn-enter-fullscreen-wallpaper">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-              Start Fullscreen Wall
-            </button>
           </div>
 
           <!-- Wallpaper Customization Grid -->
@@ -541,9 +597,14 @@
               </div>
               <div class="guide-content">
                 <div class="guide-steps">
-                  <div>1. Download free open-source <strong>Lively Wallpaper</strong> (from Microsoft Store or GitHub) or open <strong>Wallpaper Engine</strong>.</div>
-                  <div>2. Select <em>Add Wallpaper</em> &rarr; <em>Web / URL</em>.</div>
-                  <div>3. Paste your live K-Wall link:
+                  <div>1. <strong>Easiest:</strong> Click the <strong>⚡ 1-Click Auto Add to Windows Wallpaper</strong> button above — it automatically configures Lively Wallpaper or creates a live desktop shortcut!</div>
+                  <div style="margin: 6px 0;">
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-guide-auto-windows">
+                      ⚡ Run 1-Click Windows Auto-Setup
+                    </button>
+                  </div>
+                  <div>2. Or open <strong>Lively Wallpaper</strong> (free from Microsoft Store) &rarr; <em>Add Wallpaper</em> &rarr; <em>Web / URL</em>.</div>
+                  <div>3. Paste your live World Wall link:
                     <div class="guide-code-box" id="guide-url-box-win">http://localhost:3000/?wallpaper=true</div>
                   </div>
                   <div>4. Click Apply to enjoy the live updating wall as your Windows desktop wallpaper!</div>
@@ -561,9 +622,9 @@
                 <div class="guide-steps">
                   <div>1. Tap your browser share or menu button (Chrome/Safari).</div>
                   <div>2. Select <strong>Add to Home Screen</strong> or <strong>Install App</strong>.</div>
-                  <div>3. Open K-Wall from your home screen — it runs in fullscreen standalone app mode without browser bars!</div>
+                  <div>3. Open World Wall from your home screen — it runs in fullscreen standalone app mode without browser bars!</div>
                   <div style="margin-top: 6px;">
-                    <button class="btn btn-secondary btn-sm" id="btn-pwa-install" style="display: none;">Install K-Wall PWA Now</button>
+                    <button class="btn btn-secondary btn-sm" id="btn-pwa-install" style="display: none;">Install World Wall PWA Now</button>
                   </div>
                 </div>
               </div>
@@ -578,7 +639,7 @@
               <div class="guide-content">
                 <div class="guide-steps">
                   <div>1. Install <strong>Plash</strong> (free on Mac App Store) to turn any website into your desktop wallpaper.</div>
-                  <div>2. Add your K-Wall Live URL to Plash.</div>
+                  <div>2. Add your World Wall Live URL to Plash.</div>
                   <div>3. Enable "Open at Login" for a continuous global wallpaper on macOS!</div>
                 </div>
               </div>
@@ -591,32 +652,274 @@
       </div>
     </div>
 
-    <!-- Share Modal -->
+    <!-- Share Modal (Viral Social Media Share Card Suite) -->
     <div id="modal-share" class="modal-overlay">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-dialog-large">
         <div class="modal-header">
           <div class="modal-title">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            <span id="share-modal-title">Share K-Wall</span>
+            <span id="share-modal-title">Share Your World Wall Moment</span>
           </div>
           <button class="modal-close" data-close>&times;</button>
         </div>
-        <div class="modal-body">
-          <p id="share-modal-desc" style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 16px;">
-            Invite friends to share their daily photo on the world's shared canvas.
-          </p>
 
-          <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-            <input type="text" id="share-link-input" class="form-input" readonly>
-            <button class="btn btn-primary" id="btn-copy-share-link">Copy</button>
+        <!-- Share Tabs -->
+        <div class="modal-tabs">
+          <button class="tab-btn active" id="tab-share-my-moment" type="button">
+            📸 Share My Photo Card
+          </button>
+          <button class="tab-btn" id="tab-share-wall" type="button">
+            🌐 Share Live Wall
+          </button>
+        </div>
+
+        <div class="modal-body" style="padding-top: 16px;">
+          <!-- TAB 1: Share My Photo Card -->
+          <div id="share-panel-my-moment" class="share-tab-panel">
+            
+            <!-- Selector for previous photos -->
+            <div id="share-history-selector-wrap" style="margin-bottom: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 0.82rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.04em;">
+                  Select Your Photo on World Wall:
+                </span>
+                <span id="share-photos-count" style="font-size: 0.75rem; color: var(--text-muted);"></span>
+              </div>
+              <!-- Horizontal scroll list of previous photos -->
+              <div id="share-user-photos-strip" class="share-photos-strip">
+                <!-- Dynamically loaded thumbnails -->
+              </div>
+            </div>
+
+            <!-- Empty state if user hasn't posted or isn't logged in -->
+            <div id="share-no-photos-callout" class="upload-rule-callout" style="display: none; margin-bottom: 16px;">
+              <div style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 4px;">🌍 Share your moment to get your custom card!</div>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 12px; line-height: 1.45;">
+                You haven't shared a photo on World Wall yet. Post your photo today to join the 77-moment global collage and unlock your personalized social media story card!
+              </p>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-primary btn-sm" id="btn-share-go-upload">+ Upload Photo to Wall</button>
+                <button class="btn btn-secondary btn-sm" id="btn-share-go-login">Sign In</button>
+              </div>
+            </div>
+
+            <!-- 2-Column Split: Card Preview on Left, Social Actions on Right -->
+            <div class="share-card-layout" id="share-card-layout-content">
+              <!-- Left: The Visual Share Card Preview (World Wall Collage Scene) -->
+              <div class="share-card-preview-container">
+                <div class="share-card-preview share-wall-scene" id="share-card-render-target">
+                  <!-- Scene Header -->
+                  <div class="share-scene-header">
+                    <div class="share-scene-brand">
+                      <img src="/assets/logo.png" alt="World Wall" class="share-scene-mini-logo">
+                      <span class="share-scene-brand-title">WORLD WALL</span>
+                    </div>
+                    <div class="share-scene-badge">
+                      <span class="pulse-dot"></span>
+                      <span>FEATURED ON LIVING WALL</span>
+                    </div>
+                  </div>
+
+                  <!-- The World Wall Collage Viewport -->
+                  <div class="share-wall-collage-viewport" id="share-wall-collage-viewport">
+                    <!-- Surrounding Background Moments from World Wall -->
+                    <div class="share-bg-card bg-card-tl">
+                      <div class="poster-card poster-theme-distressed-red">
+                        <div class="poster-media-wrap">
+                          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" alt="Moment">
+                        </div>
+                        <div class="poster-content-layer">
+                          <div class="poster-author-stamp"><span>📍 LONDON</span><span>•</span><span>OLIVER</span></div>
+                          <div class="poster-headline">FIND YOUR FIRE</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="share-bg-card bg-card-tr">
+                      <div class="poster-card poster-theme-bold-yellow">
+                        <div class="poster-media-wrap">
+                          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80" alt="Moment">
+                        </div>
+                        <div class="poster-content-layer">
+                          <div class="poster-author-stamp"><span>📍 ZURICH</span><span>•</span><span>LUKAS</span></div>
+                          <div class="poster-headline">CREATE DON'T WAIT</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="share-bg-card bg-card-ml">
+                      <div class="poster-card poster-theme-minimal-dark">
+                        <div class="poster-media-wrap">
+                          <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=400&q=80" alt="Moment">
+                        </div>
+                        <div class="poster-content-layer">
+                          <div class="poster-author-stamp"><span>📍 BUENOS AIRES</span><span>•</span><span>SOFIA</span></div>
+                          <div class="poster-headline">JUST <span class="highlight">TRY</span>.</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="share-bg-card bg-card-tm">
+                      <div class="poster-card poster-theme-dark-gritty">
+                        <div class="poster-media-wrap">
+                          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" alt="Moment">
+                        </div>
+                        <div class="poster-content-layer">
+                          <div class="poster-author-stamp"><span>📍 TOKYO</span><span>•</span><span>KENJI</span></div>
+                          <div class="poster-headline">THE WILL MUST BE STRONGER THAN THE SKILL</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="share-bg-card bg-card-mr">
+                      <div class="poster-card poster-theme-retro-pop">
+                        <div class="poster-media-wrap">
+                          <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80" alt="Moment">
+                        </div>
+                        <div class="poster-content-layer">
+                          <div class="poster-author-stamp"><span>📍 MUMBAI</span><span>•</span><span>PRIYA</span></div>
+                          <div class="poster-headline">RISE &amp; GRIND</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="share-bg-card bg-card-bl">
+                      <div class="poster-card poster-theme-minimal-dark">
+                        <div class="poster-media-wrap">
+                          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" alt="Moment">
+                        </div>
+                        <div class="poster-content-layer">
+                          <div class="poster-author-stamp"><span>📍 SANTIAGO</span><span>•</span><span>MATEO</span></div>
+                          <div class="poster-headline">ARE YOU WORKING <span class="highlight">HARD ENOUGH</span>?</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="share-bg-card bg-card-br">
+                      <div class="poster-card poster-theme-bold-yellow">
+                        <div class="poster-media-wrap">
+                          <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80" alt="Moment">
+                        </div>
+                        <div class="poster-content-layer">
+                          <div class="poster-author-stamp"><span>📍 OSLO</span><span>•</span><span>FREJA</span></div>
+                          <div class="poster-headline">DON'T PANIC</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Center World Wall Gold Emblem (matching center logo on wall) -->
+                    <div class="share-scene-center-logo">
+                      <div class="scene-logo-badge">
+                        <img src="/assets/logo.png" alt="World Wall">
+                      </div>
+                    </div>
+
+                    <!-- THE USER'S FEATURED POSTER CARD (Overlapping beside the logo) -->
+                    <div class="share-user-featured-card" id="share-user-featured-card">
+                      <div class="poster-card poster-theme-default" id="share-card-poster-inner">
+                        <div class="poster-media-wrap">
+                          <img id="share-card-img" src="" alt="World Wall Photo" crossorigin="anonymous">
+                        </div>
+                        <div class="poster-content-layer">
+                          <div class="poster-author-stamp">
+                            <span id="share-card-location">📍 LOCATION</span>
+                            <span>•</span>
+                            <span id="share-card-author-name">USER</span>
+                          </div>
+                          <div class="poster-headline" id="share-card-message">Your message here</div>
+                        </div>
+                        <div class="featured-glow-badge">
+                          <span class="featured-star">★</span>
+                          <span>MY MOMENT</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Hidden avatar placeholder to preserve element ID for scripts -->
+                    <img id="share-card-author-avatar" src="" alt="" style="display: none;">
+                  </div>
+
+                  <!-- Scene Footer / Viral Callout -->
+                  <div class="share-scene-footer">
+                    <div class="share-scene-cta">
+                      <div class="share-scene-cta-main">I'm on the World Wall! 🌍✨</div>
+                      <div class="share-scene-cta-sub">Find my moment among 77 global photos:</div>
+                    </div>
+                    <div class="share-scene-url-pill">
+                      <span id="share-card-display-url">worldwall.app</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Download & Social Sharing Actions -->
+              <div class="share-actions-sidebar">
+                <div class="setting-card" style="padding: 18px; margin-bottom: 12px;">
+                  <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 4px;">
+                    Attract Friends to Your Photo
+                  </div>
+                  <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.45;">
+                    Share this card to Instagram Stories, WhatsApp Status, or X/Twitter. Anyone who views it can visit World Wall and add their own photo!
+                  </p>
+
+                  <!-- 1. Download Story Card (HD) -->
+                  <button class="btn btn-primary" id="btn-download-share-card" style="width: 100%; margin-bottom: 8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>Download Story Card (HD Image)</span>
+                  </button>
+
+                  <!-- 2. Mobile Native Share (Instagram / WhatsApp / etc.) -->
+                  <button class="btn btn-secondary" id="btn-native-share-card" style="width: 100%; margin-bottom: 14px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    <span>Share via Apps (1-Tap Share)</span>
+                  </button>
+
+                  <div style="font-size: 0.74rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 8px;">Direct Social Links</div>
+                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px;">
+                    <a href="#" class="btn btn-outline btn-sm" id="btn-post-share-x" target="_blank" rel="noopener">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                      Post to X
+                    </a>
+                    <a href="#" class="btn btn-outline btn-sm" id="btn-post-share-whatsapp" target="_blank" rel="noopener">
+                      💬 WhatsApp
+                    </a>
+                    <a href="#" class="btn btn-outline btn-sm" id="btn-post-share-telegram" target="_blank" rel="noopener">
+                      ✈️ Telegram
+                    </a>
+                    <a href="#" class="btn btn-outline btn-sm" id="btn-post-share-facebook" target="_blank" rel="noopener">
+                      📘 Facebook
+                    </a>
+                  </div>
+
+                  <!-- Direct Link to this Post -->
+                  <div style="font-size: 0.74rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 6px;">Direct Link to Your Photo</div>
+                  <div style="display: flex; gap: 6px;">
+                    <input type="text" id="share-card-link-input" class="form-input" style="padding: 7px 10px; font-size: 0.80rem;" readonly>
+                    <button class="btn btn-secondary btn-sm" id="btn-copy-card-link">Copy</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 10px;">Share to Social Networks</div>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
-            <a href="#" class="btn btn-secondary btn-sm" id="btn-share-x" target="_blank" rel="noopener">X / Twitter</a>
-            <a href="#" class="btn btn-secondary btn-sm" id="btn-share-whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-            <a href="#" class="btn btn-secondary btn-sm" id="btn-share-telegram" target="_blank" rel="noopener">Telegram</a>
-            <a href="#" class="btn btn-secondary btn-sm" id="btn-share-reddit" target="_blank" rel="noopener">Reddit</a>
+          <!-- TAB 2: Share Global Wall -->
+          <div id="share-panel-wall" class="share-tab-panel" style="display: none;">
+            <p id="share-modal-desc" style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 16px;">
+              Invite friends to share their daily photo on the world's shared canvas.
+            </p>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+              <input type="text" id="share-link-input" class="form-input" readonly>
+              <button class="btn btn-primary" id="btn-copy-share-link">Copy</button>
+            </div>
+
+            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 10px;">Share to Social Networks</div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+              <a href="#" class="btn btn-secondary btn-sm" id="btn-share-x" target="_blank" rel="noopener">X / Twitter</a>
+              <a href="#" class="btn btn-secondary btn-sm" id="btn-share-whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+              <a href="#" class="btn btn-secondary btn-sm" id="btn-share-telegram" target="_blank" rel="noopener">Telegram</a>
+              <a href="#" class="btn btn-secondary btn-sm" id="btn-share-reddit" target="_blank" rel="noopener">Reddit</a>
+            </div>
           </div>
         </div>
       </div>
@@ -662,17 +965,17 @@
   </div>
 
   <!-- Client JavaScript Modules -->
-  <script src="/js/api.js?v=4.1"></script>
-  <script src="/js/socket.js?v=4.1"></script>
-  <script src="/js/wall.js?v=4.1"></script>
-  <script src="/js/controls.js?v=4.1"></script>
-  <script src="/js/upload.js?v=4.1"></script>
-  <script src="/js/post-detail.js?v=4.1"></script>
-  <script src="/js/chat.js?v=4.1"></script>
-  <script src="/js/profile.js?v=4.1"></script>
-  <script src="/js/wallpaper.js?v=4.1"></script>
-  <script src="/js/share.js?v=4.1"></script>
-  <script src="/js/auth.js?v=4.1"></script>
-  <script src="/js/app.js?v=4.1"></script>
+  <script src="/js/api.js?v=5.9"></script>
+  <script src="/js/socket.js?v=5.9"></script>
+  <script src="/js/wall.js?v=5.9"></script>
+  <script src="/js/controls.js?v=5.9"></script>
+  <script src="/js/upload.js?v=5.9"></script>
+  <script src="/js/post-detail.js?v=5.9"></script>
+  <script src="/js/chat.js?v=5.9"></script>
+  <script src="/js/profile.js?v=5.9"></script>
+  <script src="/js/wallpaper.js?v=5.9"></script>
+  <script src="/js/share.js?v=5.9"></script>
+  <script src="/js/auth.js?v=5.9"></script>
+  <script src="/js/app.js?v=5.9"></script>
 </body>
 </html>

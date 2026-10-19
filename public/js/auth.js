@@ -61,7 +61,7 @@ const Auth = {
         API.setUser(res.user);
         await Controls.syncEligibility();
         this.close();
-        App.showToast(`Account created! Welcome to K-Wall, ${res.user.display_name}!`, 'success');
+        App.showToast(`Account created! Welcome to World Wall, ${res.user.display_name}!`, 'success');
       } catch (err) {
         App.showToast(err.message || 'Registration failed.', 'error');
       }
