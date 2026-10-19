@@ -426,6 +426,21 @@
   color: var(--text-muted);
 }
 
+#detail-location-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(6, 182, 212, 0.14);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  padding: 5px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: var(--radius-full);
+  box-shadow: 0 2px 8px rgba(6, 182, 212, 0.15);
+}
+
 .post-message-box {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(16px);

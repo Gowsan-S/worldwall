@@ -95,8 +95,8 @@ const PostDetail = {
       document.getElementById('detail-views-count').textContent = `${(post.views_count || 1).toLocaleString()} views`;
 
       const locBadge = document.getElementById('detail-location-badge');
-      if (post.location) {
-        locBadge.textContent = post.location;
+      if (post.location && post.location.trim()) {
+        locBadge.textContent = `📍 ${post.location.trim()}`;
         locBadge.style.display = 'inline-flex';
       } else {
         locBadge.style.display = 'none';

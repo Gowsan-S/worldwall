@@ -273,11 +273,6 @@ const Wall = {
           <img src="${this.escapeHtml(post.image_url)}" alt="${this.escapeHtml(post.display_name)}" loading="lazy">
         </div>
         <div class="poster-content-layer">
-          <div class="poster-author-stamp">
-            <span>📍 ${authorLocation}</span>
-            <span>•</span>
-            <span>${authorShortName}</span>
-          </div>
           <div class="poster-headline">${headlineHtml}</div>
         </div>
       </div>

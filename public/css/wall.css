@@ -107,33 +107,14 @@
   z-index: 2;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 6px 8px;
   pointer-events: none;
 }
 
-/* Author stamp pill - Frosted Crystal Glass */
+/* Hide location / author stamp outside the photo on the wall */
 .poster-author-stamp {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2.5px 7px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.04) 50%, rgba(255, 255, 255, 0.10) 100%),
-              rgba(10, 14, 24, 0.32);
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  border-radius: var(--radius-full);
-  font-size: 0.58rem;
-  font-weight: 700;
-  color: #f8fafc;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-top: 1px solid rgba(255, 255, 255, 0.65);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.5);
-  line-height: 1.2;
-  white-space: nowrap;
+  display: none !important;
 }
 
 /* Headline base clamp */
