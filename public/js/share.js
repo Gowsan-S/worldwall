@@ -209,6 +209,16 @@ const Share = {
         this.userPosts.unshift(preselectedPost);
       }
 
+      // Also check Wall.posts for any posts belonging to current user if userPosts is empty
+      if (this.userPosts.length === 0 && user) {
+        if (window.Wall && Array.isArray(window.Wall.posts)) {
+          const wallUserPosts = window.Wall.posts.filter(p => p.user_id === user.id);
+          if (wallUserPosts.length > 0) {
+            this.userPosts = wallUserPosts;
+          }
+        }
+      }
+
       if (this.userPosts.length === 0) {
         this.renderNoPhotosState(true);
         return;
@@ -301,7 +311,11 @@ const Share = {
     const cardDisplayUrl = document.getElementById('share-card-display-url');
     const posterInner = document.getElementById('share-card-poster-inner');
 
-    if (cardImg) cardImg.src = post.image_url;
+    if (cardImg) {
+      cardImg.src = post.image_url;
+      cardImg.style.display = 'block';
+      cardImg.style.opacity = '1';
+    }
     if (cardAuthor) cardAuthor.textContent = displayName.split(' ')[0].toUpperCase();
     if (cardAvatar) cardAvatar.src = avatarUrl;
 
@@ -313,7 +327,7 @@ const Share = {
 
     let theme = post.poster_style;
     if (!theme || theme === 'default') {
-      theme = 'distressed-red';
+      theme = 'fullbleed';
     }
     if (posterInner) {
       posterInner.className = `poster-card poster-theme-${theme}`;
@@ -461,20 +475,47 @@ const Share = {
     ctx.fillStyle = radGold;
     ctx.fillRect(0, 0, 1080, 1440);
 
-    // Helper: Image Loader Promise with 2s timeout
+    // Helper: Image Loader Promise with CORS retry & DOM fallback
     const loadImage = (src) => new Promise((resolve) => {
       if (!src) return resolve(null);
       const img = new Image();
-      img.crossOrigin = 'anonymous';
+      if (!src.startsWith('data:')) {
+        img.crossOrigin = 'anonymous';
+      }
       let done = false;
       const timer = setTimeout(() => {
-        if (!done) { done = true; resolve(null); }
-      }, 2000);
+        if (!done) {
+          done = true;
+          const domImg = document.getElementById('share-card-img');
+          if (domImg && domImg.src === src && domImg.complete && domImg.naturalWidth > 0) {
+            resolve(domImg);
+          } else {
+            resolve(null);
+          }
+        }
+      }, 3500);
+
       img.onload = () => {
         if (!done) { done = true; clearTimeout(timer); resolve(img); }
       };
       img.onerror = () => {
-        if (!done) { done = true; clearTimeout(timer); resolve(null); }
+        if (!done) {
+          const domImg = document.getElementById('share-card-img');
+          if (domImg && domImg.complete && domImg.naturalWidth > 0) {
+            done = true;
+            clearTimeout(timer);
+            resolve(domImg);
+            return;
+          }
+          const retryImg = new Image();
+          retryImg.onload = () => {
+            if (!done) { done = true; clearTimeout(timer); resolve(retryImg); }
+          };
+          retryImg.onerror = () => {
+            if (!done) { done = true; clearTimeout(timer); resolve(null); }
+          };
+          retryImg.src = src;
+        }
       };
       img.src = src;
     });

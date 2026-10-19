@@ -21,7 +21,7 @@ router.get('/:identifier', optionalAuth, (req, res) => {
 
     // Get user's published posts history
     const posts = db.prepare(`
-      SELECT id, image_url, message, location, date_utc, created_at, views_count
+      SELECT id, image_url, message, location, date_utc, created_at, views_count, poster_style, aspect_ratio
       FROM posts 
       WHERE user_id = ? AND status = 'published'
       ORDER BY created_at DESC

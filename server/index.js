@@ -24,8 +24,13 @@ app.use(cors());
 app.use(express.json({ limit: '12mb' }));
 app.use(express.urlencoded({ extended: true, limit: '12mb' }));
 
-// Static file serving with no-cache in dev to ensure immediate UI updates
-app.use('/uploads', express.static(UPLOADS_DIR));
+// Static file serving with CORS and no-cache
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(UPLOADS_DIR));
 app.use(express.static(path.join(__dirname, '..', 'public'), {
   setHeaders: (res, path) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');

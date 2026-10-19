@@ -182,10 +182,24 @@ router.post('/', requireAuth, upload.single('photo'), (req, res) => {
 
     // 2. Resolve Image URL
     let imageUrl = '';
-    if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
-    } else if (req.body.image_url && req.body.image_url.trim()) {
+    if (req.body.image_url && req.body.image_url.trim()) {
       imageUrl = req.body.image_url.trim();
+      if (req.file) {
+        try { fs.unlinkSync(req.file.path); } catch (e) {}
+      }
+    } else if (req.file) {
+      if (process.env.VERCEL || process.env.NOW_REGION || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.USE_MEMORY_DB) {
+        try {
+          const fileBuf = fs.readFileSync(req.file.path);
+          const mime = req.file.mimetype || 'image/jpeg';
+          imageUrl = `data:${mime};base64,${fileBuf.toString('base64')}`;
+          try { fs.unlinkSync(req.file.path); } catch (e) {}
+        } catch (e) {
+          imageUrl = `/uploads/${req.file.filename}`;
+        }
+      } else {
+        imageUrl = `/uploads/${req.file.filename}`;
+      }
     } else {
       return res.status(400).json({ error: 'Please select a photo to upload or capture.' });
     }

@@ -939,6 +939,34 @@
   border-radius: 12px;
   position: relative;
   overflow: hidden;
+  background: #0f172a;
+}
+
+.share-user-featured-card .poster-card .poster-media-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.share-user-featured-card .poster-card .poster-media-wrap img,
+#share-card-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+  filter: none !important;
+}
+
+.share-strip-thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  opacity: 1 !important;
 }
 
 .featured-glow-badge {

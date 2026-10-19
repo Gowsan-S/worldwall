@@ -209,6 +209,57 @@ const Upload = {
     reader.readAsDataURL(file);
   },
 
+  compressImage(file) {
+    return new Promise((resolve) => {
+      if (!file) return resolve(null);
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        try {
+          const maxDim = 1200;
+          let w = img.width;
+          let h = img.height;
+
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          resolve(dataUrl);
+        } catch (e) {
+          const reader = new FileReader();
+          reader.onload = (ev) => resolve(ev.target.result);
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(file);
+        }
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        const reader = new FileReader();
+        reader.onload = (ev) => resolve(ev.target.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      };
+
+      img.src = url;
+    });
+  },
+
   clearSelectedFile() {
     this.selectedFile = null;
     this.fileInput.value = '';
@@ -354,11 +405,17 @@ const Upload = {
 
     // Set loading state
     this.submitBtn.disabled = true;
-    this.submitBtn.innerHTML = `<span class="spinner"></span> <span>Publishing...</span>`;
+    this.submitBtn.innerHTML = `<span class="spinner"></span> <span>Optimizing &amp; Publishing...</span>`;
 
     try {
+      // Fast client-side image compression to high-resolution JPEG Data URL
+      const dataUrl = await this.compressImage(this.selectedFile);
+
       const formData = new FormData();
       formData.append('photo', this.selectedFile);
+      if (dataUrl) {
+        formData.append('image_url', dataUrl);
+      }
       formData.append('message', message);
       if (this.locationInput.value.trim()) {
         formData.append('location', this.locationInput.value.trim());
