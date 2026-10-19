@@ -34,42 +34,50 @@ app.use(express.static(path.join(__dirname, '..', 'public'), {
   }
 }));
 
-// WebSocket Server
-const wss = new WebSocketServer({ server });
+// WebSocket Server (safe for both standalone Node and Serverless)
+let wss = null;
 const clients = new Set();
 
-wss.on('connection', (ws) => {
-  clients.add(ws);
+if (!process.env.VERCEL) {
+  try {
+    wss = new WebSocketServer({ server });
+    wss.on('connection', (ws) => {
+      clients.add(ws);
 
-  // Send initial countdown sync and connection confirmation
-  ws.send(JSON.stringify({
-    type: 'WELCOME',
-    countdown: getUtcCountdown(),
-    connectedClients: clients.size
-  }));
+      // Send initial countdown sync and connection confirmation
+      ws.send(JSON.stringify({
+        type: 'WELCOME',
+        countdown: getUtcCountdown(),
+        connectedClients: clients.size
+      }));
 
-  ws.on('message', (message) => {
-    try {
-      const data = JSON.parse(message);
-      if (data.type === 'PING') {
-        ws.send(JSON.stringify({ type: 'PONG', timestamp: Date.now() }));
-      }
-    } catch (e) {
-      // Ignore invalid payload
-    }
-  });
+      ws.on('message', (message) => {
+        try {
+          const data = JSON.parse(message);
+          if (data.type === 'PING') {
+            ws.send(JSON.stringify({ type: 'PONG', timestamp: Date.now() }));
+          }
+        } catch (e) {
+          // Ignore invalid payload
+        }
+      });
 
-  ws.on('close', () => {
-    clients.delete(ws);
-  });
+      ws.on('close', () => {
+        clients.delete(ws);
+      });
 
-  ws.on('error', () => {
-    clients.delete(ws);
-  });
-});
+      ws.on('error', () => {
+        clients.delete(ws);
+      });
+    });
+  } catch (wsErr) {
+    console.warn('WebSocket server failed to initialize:', wsErr.message);
+  }
+}
 
 // Broadcast helper
 function broadcast(payload) {
+  if (clients.size === 0) return;
   const json = JSON.stringify(payload);
   for (const client of clients) {
     if (client.readyState === WebSocket.OPEN) {
@@ -82,22 +90,33 @@ function broadcast(payload) {
 postsRoutes.setBroadcast(broadcast);
 messagesRoutes.setBroadcast(broadcast);
 
-// API Routes
+// API Routes (Mounted on both /api/* and root /* for universal compatibility across reverse proxies and serverless rewrites)
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
+
 app.use('/api/posts', postsRoutes);
+app.use('/posts', postsRoutes);
+
 app.use('/api/messages', messagesRoutes);
+app.use('/messages', messagesRoutes);
+
 app.use('/api/users', usersRoutes);
+app.use('/users', usersRoutes);
+
 app.use('/api/reports', reportsRoutes);
+app.use('/reports', reportsRoutes);
 
 // Server time and countdown endpoint
-app.get('/api/time', (req, res) => {
+const timeHandler = (req, res) => {
   res.json({
     countdown: getUtcCountdown(),
     serverTimeUtc: new Date().toISOString()
   });
-});
+};
+app.get('/api/time', timeHandler);
+app.get('/time', timeHandler);
 
-// Helper: Pure JS Uncompressed Zip Generator for .lively packages
+// Pure JS Uncompressed Zip Generator for .lively packages
 function createSimpleZip(filename, content) {
   const data = Buffer.from(content, 'utf8');
   const nameBuf = Buffer.from(filename, 'utf8');
@@ -162,7 +181,7 @@ function createSimpleZip(filename, content) {
 }
 
 // 1-Click Automatic Windows Live Wallpaper Runner (.bat)
-app.get('/api/wallpaper/download-bat', (req, res) => {
+const downloadBatHandler = (req, res) => {
   const host = req.get('host') || `localhost:${PORT}`;
   const protocol = req.protocol || 'http';
   const liveUrl = `${protocol}://${host}/?wallpaper=true`;
@@ -234,10 +253,12 @@ exit /b 0
   res.setHeader('Content-Disposition', 'attachment; filename="Add-WorldWall-LiveWallpaper.bat"');
   res.setHeader('Content-Type', 'application/x-bat');
   res.send(batContent);
-});
+};
+app.get('/api/wallpaper/download-bat', downloadBatHandler);
+app.get('/wallpaper/download-bat', downloadBatHandler);
 
 // 1-Click Lively Wallpaper Pack (.lively)
-app.get('/api/wallpaper/download-lively', (req, res) => {
+const downloadLivelyHandler = (req, res) => {
   const host = req.get('host') || `localhost:${PORT}`;
   const protocol = req.protocol || 'http';
   const liveUrl = `${protocol}://${host}/?wallpaper=true`;
@@ -248,7 +269,7 @@ app.get('/api/wallpaper/download-lively', (req, res) => {
     Author: "World Wall",
     License: "MIT",
     Contact: liveUrl,
-    Type: 1, // 1 = Web / URL
+    Type: 1,
     FileName: liveUrl,
     Arguments: ""
   };
@@ -257,7 +278,9 @@ app.get('/api/wallpaper/download-lively', (req, res) => {
   res.setHeader('Content-Disposition', 'attachment; filename="WorldWall.lively"');
   res.setHeader('Content-Type', 'application/zip');
   res.send(zipBuffer);
-});
+};
+app.get('/api/wallpaper/download-lively', downloadLivelyHandler);
+app.get('/wallpaper/download-lively', downloadLivelyHandler);
 
 // Single Page Application fallback - serve index.html for non-API GET routes
 app.use((req, res, next) => {
@@ -273,10 +296,16 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: err.message || 'Internal Server Error' });
 });
 
-server.listen(PORT, () => {
-  console.log(`=========================================`);
-  console.log(`  WORLD WALL — A Global Wall of People`);
-  console.log(`  Server running on http://localhost:${PORT}`);
-  console.log(`  WebSockets ready for live wall updates`);
-  console.log(`=========================================`);
-});
+// Start listening when executed directly in Node (e.g., local dev)
+if (require.main === module && !process.env.VERCEL) {
+  server.listen(PORT, () => {
+    console.log(`=========================================`);
+    console.log(`  WORLD WALL — A Global Wall of People`);
+    console.log(`  Server running on http://localhost:${PORT}`);
+    console.log(`  WebSockets ready for live wall updates`);
+    console.log(`=========================================`);
+  });
+}
+
+// Export app for Vercel Serverless Functions
+module.exports = app;
